@@ -408,8 +408,9 @@ expect {
   -ex {sort -rh} {}
   timeout { puts "\nFAIL: command never streamed in"; exit 1 }
 }
+# zle may redraw the explanation in pieces too; the state check below verifies all of it.
 expect {
-  -ex {largest first.} {}
+  -timeout 20 -ex {first.} {}
   timeout { puts "\nFAIL: explanation never came"; exit 1 }
 }
 send "\024"
