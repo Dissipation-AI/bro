@@ -1,0 +1,2 @@
+{"request": "who wrote line 40 of app.py", "folder": "~/code/api", "files": ["app.py", "tests/"],
+ "accept": ["^git blame -L ?40,40 app\\.py$", "^git blame -L ?40,\\+1 app\\.py$"]}

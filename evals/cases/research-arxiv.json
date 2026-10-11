@@ -1,0 +1,2 @@
+{"request": "find papers about diffusion models on arxiv",
+ "accept": ["^open( -a \"?[A-Za-z ]+\"?)? \"?https://(www\\.)?(arxiv\\.org|search\\.brave\\.com|www\\.google\\.com)/[^ ]*diffusion"]}

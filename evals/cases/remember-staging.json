@@ -1,0 +1,2 @@
+{"request": "remember that my staging server is 10.20.0.8",
+ "accept": ["^echo .*10\\.20\\.0\\.8.* >> ~/\\.config/bro/bro\\.md$"]}

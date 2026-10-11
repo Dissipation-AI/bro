@@ -1,16 +1,12 @@
 //! Running processes, read through libproc directly (no `ps` spawn).
 //!
-//! For requests about load ("what's eating my cpu"), CPU is measured over a short window between
-//! two samples, so it reflects what's busy now. Otherwise it's each process's average since it
-//! started, which needs no waiting. Other users' processes have names and pids but no figures.
+//! CPU is each process's average since it started: measuring what's busy right now needs two
+//! samples ~15 ms apart, over the startup budget. When the live figure matters, the model can pipe
+//! `ps` into bro. Other users' processes have names and pids but no figures.
 
 use super::Process;
-use std::collections::HashMap;
 use std::ffi::{c_int, c_void};
-use std::time::{Duration, Instant};
 
-/// Sampling window for CPU usage.
-const WINDOW: Duration = Duration::from_millis(12);
 const TOP_CPU: usize = 15;
 const TOP_MEMORY: usize = 15;
 const MATCHING: usize = 10;
@@ -19,15 +15,7 @@ unsafe extern "C" {
     fn proc_listallpids(buffer: *mut c_void, buffersize: c_int) -> c_int;
     fn proc_name(pid: c_int, buffer: *mut c_void, buffersize: u32) -> c_int;
     fn proc_pid_rusage(pid: c_int, flavor: c_int, buffer: *mut c_void) -> c_int;
-    fn mach_timebase_info(info: *mut TimebaseInfo) -> c_int;
     fn mach_absolute_time() -> u64;
-}
-
-#[repr(C)]
-#[derive(Default)]
-struct TimebaseInfo {
-    numer: u32,
-    denom: u32,
 }
 
 const RUSAGE_INFO_V2: c_int = 2;
@@ -102,45 +90,27 @@ fn usage(pid: c_int) -> Option<Usage> {
     })
 }
 
-fn nanos_per_unit() -> f64 {
-    let mut tb = TimebaseInfo::default();
-    unsafe { mach_timebase_info(&mut tb) };
-    if tb.denom == 0 { 1.0 } else { tb.numer as f64 / tb.denom as f64 }
-}
-
 /// Processes worth showing: those whose name matches a request word, then the busiest by CPU
 /// and the largest by memory. bro's own process is left out.
-pub fn sample(words: &[String], measure_cpu: bool) -> Vec<Process> {
+pub fn sample(words: &[String]) -> Vec<Process> {
     let me = std::process::id() as c_int;
-    let pids = all_pids();
-    let first: HashMap<c_int, u64> =
-        if measure_cpu { pids.iter().filter_map(|&p| usage(p).map(|u| (p, u.cpu))).collect() } else { HashMap::new() };
-    let t0 = Instant::now();
-    if measure_cpu {
-        std::thread::sleep(WINDOW);
-    }
-    let elapsed_ns = t0.elapsed().as_nanos().max(1) as f64;
-    let scale = nanos_per_unit();
     let now = unsafe { mach_absolute_time() };
-
-    let mut all: Vec<Process> = Vec::with_capacity(pids.len());
-    for &pid in &pids {
+    let mut all: Vec<Process> = Vec::new();
+    for pid in all_pids() {
         if pid == me {
             continue;
         }
         let Some(name) = name(pid) else { continue };
-        let round = |percent: f64| Some((percent * 10.0).round() as f32 / 10.0);
-        let (cpu_percent, memory_mb) = match (first.get(&pid), usage(pid)) {
-            (Some(&cpu0), Some(u)) => {
-                (round(u.cpu.saturating_sub(cpu0) as f64 * scale / elapsed_ns * 100.0), Some(u.footprint / 1_048_576))
-            }
-            (None, Some(u)) => {
+        let (cpu_percent, memory_mb) = match usage(pid) {
+            Some(u) => {
+                // Both in mach units, so the ratio needs no timebase.
                 let lifetime = now.saturating_sub(u.started).max(1);
-                (round(u.cpu as f64 / lifetime as f64 * 100.0), Some(u.footprint / 1_048_576))
+                let percent = u.cpu as f64 / lifetime as f64 * 100.0;
+                (Some((percent * 10.0).round() as f32 / 10.0), Some(u.footprint / 1_048_576))
             }
-            _ => (None, None),
+            None => (None, None),
         };
-        all.push(Process { name, pid, cpu_percent, memory_mb, cpu_average: !measure_cpu });
+        all.push(Process { name, pid, cpu_percent, memory_mb, cpu_average: true });
     }
     select(all, words)
 }

@@ -49,6 +49,7 @@ error[E0432]: unresolved import `serde`
 - [Privacy](#privacy)
 - [From scripts and other tools](#from-scripts-and-other-tools)
 - [Configuration](#configuration)
+- [bro.md: notes for bro](#bromd-notes-for-bro)
 - [How it works](#how-it-works)
 - [Evals](#evals)
 - [Development](#development)
@@ -176,7 +177,7 @@ to anything with an OpenAI-compatible `/v1/chat/completions` endpoint.
 | Preset | Where it runs | Cost | Speed | Notes |
 |---|---|---|---|---|
 | **Google Gemini** (`gemini-3.5-flash-lite`) | Google's cloud | free tier available | **~0.9 s** | Most accurate in our evals. Needs an API key from [Google AI Studio](https://aistudio.google.com/apikey). |
-| **apfel** (Apple's on-device model) | your Mac | free | ~1.8 s | Private, no key needed, macOS 26+. [apfel](https://apfel.franzai.com/) serves Apple's built-in model; start it with `brew services start apfel`. Small model, small context. |
+| **apfel** (Apple's on-device model) | your Mac | free | ~1.8 s | Private, no key needed, macOS 26+. [apfel](https://apfel.franzai.com/) serves Apple's built-in model; start it with `brew services start apfel`. Small model, small context: fine for everyday commands, weaker on anything unusual. |
 | **Ollama** | your Mac | free | depends on model and Mac | e.g. `ollama pull qwen3:8b` |
 | **llama.cpp server** | your Mac | free | depends | |
 | **LM Studio** | your Mac | free | depends | |
@@ -208,10 +209,12 @@ on-device models) and trimmed from the bottom of this list:
 | Source | Details |
 |---|---|
 | Your request and the current line | exactly as typed or dictated |
+| Your notes | `~/.config/bro/bro.md`, see [bro.md](#bromd-notes-for-bro) |
+| Anything you pipe in | see [Pipe things into bro](#pipe-things-into-bro) |
 | Your last 3 commands | with exit status, and their **output** when running inside [CTX](#ctx) |
 | Current folder | path, git branch and short status, the first 50 entries |
 | Open tabs | inside CTX: number, name, folder, what's running |
-| Running processes | top 15 by CPU and by memory, plus processes you mentioned by name, plus your shell's jobs |
+| Running processes | top 15 by CPU (averaged since each started) and by memory, plus processes you mentioned by name, plus your shell's jobs |
 | Environment | variable names; values only for safe ones like `PATH` and `EDITOR` (see [Privacy](#privacy)) |
 | Aliases and functions | names, so bro can use yours |
 | Installed apps | and your default browser |
@@ -309,6 +312,28 @@ history_examples = 20              # past requests sent as examples
 
 ---
 
+## bro.md: notes for bro
+
+`~/.config/bro/bro.md` is yours: plain text that bro adds to its instructions on every request,
+like `CLAUDE.md` for Claude Code. Put in whatever bro should know about you and this computer:
+
+```markdown
+- My GPU box is the host lab-gpu (ssh config is set up).
+- I use uv, not pip, and pnpm, not npm.
+- "The blog" means ~/code/blog. Deploy it with ./scripts/ship.
+- Prefer ripgrep (rg) over grep.
+```
+
+Then `bro install requests` gives `uv add requests`, and `bro connect to the gpu box` gives
+`ssh lab-gpu`.
+
+You can also just tell bro: `bro remember that my staging server is 10.20.0.8` suggests
+`echo '- my staging server is 10.20.0.8' >> ~/.config/bro/bro.md`. Press Enter and it knows from
+then on. The notes are redacted like everything else, and long files are cut to fit the model's
+budget.
+
+---
+
 ## How it works
 
 ```
@@ -352,9 +377,10 @@ CTX only through the `ctx` command line; without it, those sources are simply ab
 
 ## Evals
 
-`evals/run.sh` runs **67 realistic cases** (each a saved context snapshot plus the commands that
-count as right or wrong) against any endpoint, and against other tools as baselines. 20 of them
-are held out: they were never used while tuning prompts.
+`evals/run.sh` runs **80 realistic cases** (each a saved context snapshot plus the commands that
+count as right or wrong) against any endpoint, and against other tools as baselines. 30 of them
+are held out: they were never used while tuning prompts. Ten of those come from areas bro has no
+examples for at all (data science, research, remote servers), to check it stays general.
 
 ```sh
 evals/run.sh                                           # your configured model
@@ -366,17 +392,23 @@ evals/run.sh kill-ghostty bsd-sed                      # just some cases
 
 Results on an M4 Pro, October 2026:
 
-| Tool and model | All 67 cases | 20 held-out cases | Typical time per request |
+| Tool and model | All 80 cases | Held-out cases | Typical time per request |
 |---|---|---|---|
-| **bro + Gemini 3.5 Flash-Lite** | **64 / 67** | **20 / 20** | **0.9 s** |
-| bro + apfel (Apple on-device) | 45 / 67 | 10 / 20 | 1.8 s |
-| [Butterfish](https://github.com/bakks/butterfish) + apfel | — | 7 / 20 | — |
-| apfel's own `cmd` | — | 7 / 20 | — |
+| **bro + Gemini 3.5 Flash-Lite** | **76 / 80** | **30 / 30** | **0.85 s** |
+| bro + apfel (Apple on-device) | 37 / 80 | 6 / 30 | 1.9 s |
+| [Butterfish](https://github.com/bakks/butterfish) + apfel | — | 7 / 20 (the first 20) | — |
+| apfel's own `cmd` | — | 7 / 20 (the first 20) | — |
 
 The baselines only see the request text, which is the point: most misses there are cases that
 need context ("fix it", "kill that", "open the notes").
 
 Each run is appended to `evals/results/<tool>.tsv`, so you can compare over time.
+
+**Nothing is hard-coded per task.** The prompt explains behaviour (use the context, fix from the
+error output, look before you edit), and the ten built-in examples each demonstrate one of those
+behaviours, not a command to recall. Rules and examples are chosen by what's in the context (a
+failed command, open tabs, piped text), never by keywords in the request. Knowing commands is
+the model's job; manual excerpts, your history and your `bro.md` fill the gaps.
 
 ---
 

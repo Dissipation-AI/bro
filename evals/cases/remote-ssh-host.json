@@ -1,0 +1,2 @@
+{"request": "connect to the gpu box",
+ "accept": ["^(cat|grep [^|]*) ~/\\.ssh/config( *\\| *bro .*)?$", "^ssh gpu(-box)?$"]}

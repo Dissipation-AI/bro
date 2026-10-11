@@ -1,0 +1,2 @@
+{"request": "switch to my ml environment", "environment": [["CONDA_DEFAULT_ENV", "base"], ["CONDA_PREFIX", "/opt/miniconda3"], ["PATH", "/opt/miniconda3/bin:/usr/bin:/bin"]],
+ "accept": ["^conda activate ml$"]}

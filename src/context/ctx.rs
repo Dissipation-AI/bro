@@ -46,13 +46,9 @@ fn run(args: &[&str]) -> Option<Value> {
     out.status.success().then(|| serde_json::from_slice(&out.stdout).ok()).flatten()
 }
 
-/// Search saved tabs only when the request is about the past ("how did I deploy last time").
+/// The query for saved tabs: the request's most specific word (the longest).
 fn find_query(words: &[String]) -> Option<String> {
-    const PAST: &[&str] = &["last", "before", "previously", "did", "yesterday", "earlier", "again", "used"];
-    if !words.iter().any(|w| PAST.contains(&w.as_str())) {
-        return None;
-    }
-    words.iter().filter(|w| !PAST.contains(&w.as_str()) && w.len() >= 4).max_by_key(|w| w.len()).cloned()
+    words.iter().filter(|w| w.len() >= 4).max_by_key(|w| w.len()).cloned()
 }
 
 /// `{"commands": [{number, command, where, ran_by, exit_status, started_at, finished_at, output}]}`
@@ -128,8 +124,8 @@ mod tests {
     }
 
     #[test]
-    fn searches_only_about_the_past() {
+    fn searches_saved_tabs_for_the_most_specific_word() {
         assert_eq!(find_query(&crate::context::request_words("how did I deploy last time")), Some("deploy".into()));
-        assert_eq!(find_query(&crate::context::request_words("deploy the site")), None);
+        assert_eq!(find_query(&crate::context::request_words("run it")), None);
     }
 }

@@ -28,6 +28,8 @@ pub struct Context {
     pub request: String,
     /// A half-typed command line, when bro was started with Ctrl-G.
     pub line: String,
+    /// This person's instructions for bro on this computer (`~/.config/bro/bro.md`).
+    pub notes: String,
     /// Output piped into this request (`cat file | bro …`).
     pub piped: Option<Piped>,
     /// Output piped into bro earlier in this terminal session, oldest first.
@@ -205,17 +207,9 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
         spawn("ctx", &tx, Box::new(move || ctx::read(&words).map(Part::Ctx)));
     }
     {
-        // Measuring CPU needs two samples a few milliseconds apart; only when it matters.
-        let measure_cpu = mentions(
-            &words,
-            &[
-                "cpu", "slow", "hog", "hogging", "eating", "busy", "fan", "fans", "heavy", "hot", "load", "stuck",
-                "frozen", "hang", "hanging", "spinning",
-            ],
-        );
         let words = words.clone();
         expected += 1;
-        spawn("processes", &tx, Box::new(move || Some(Part::Processes(processes::sample(&words, measure_cpu)))));
+        spawn("processes", &tx, Box::new(move || Some(Part::Processes(processes::sample(&words)))));
     }
     {
         let words = words.clone();
@@ -305,10 +299,6 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
     stop_git.store(true, Ordering::Relaxed);
     timings.mark("sources done");
     context
-}
-
-fn mentions(words: &[String], list: &[&str]) -> bool {
-    words.iter().any(|w| list.contains(&w.as_str()))
 }
 
 /// Environment variable names, with values only where the redaction rules allow.

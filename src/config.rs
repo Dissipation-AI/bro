@@ -71,6 +71,12 @@ pub fn config_path() -> PathBuf {
     home().join(".config/bro/config.toml")
 }
 
+/// `~/.config/bro/bro.md`: this person's own instructions for bro on this computer, in their
+/// words (like CLAUDE.md). Added to the instructions on every request.
+pub fn notes_path() -> PathBuf {
+    config_path().with_file_name("bro.md")
+}
+
 /// `~/Library/Application Support/bro/`: the learning history.
 pub fn data_dir() -> PathBuf {
     if let Some(dir) = std::env::var_os("BRO_DATA_DIR") {

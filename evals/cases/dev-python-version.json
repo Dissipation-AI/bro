@@ -1,0 +1,12 @@
+{
+  "request": "which python is this project using",
+  "folder": "~/code/api",
+  "files": [
+    ".python-version",
+    "pyproject.toml",
+    "src/"
+  ],
+  "accept": [
+    "^(pyenv version|python3? (-V|--version)|cat \\.python-version|(which|type) python3?)( *(\\|\\||&&|;) *(pyenv version|python3? (-V|--version)|cat \\.python-version|(which|type) python3?))*$"
+  ]
+}

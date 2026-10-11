@@ -1,0 +1,2 @@
+{"request": "install requests", "folder": "~/code/api", "files": ["pyproject.toml", "uv.lock", "src/"], "notes": "- My GPU box is the host lab-gpu.\n- I use uv, not pip.",
+ "accept": ["^uv (add|pip install) requests$"]}

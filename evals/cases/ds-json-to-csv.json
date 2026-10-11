@@ -1,0 +1,12 @@
+{
+  "request": "turn results.json into a csv",
+  "folder": "~/research/q3",
+  "files": [
+    "results.json"
+  ],
+  "git": null,
+  "accept": [
+    "results\\.json.*csv",
+    "^(cat|head)( -[a-z0-9]+)? results\\.json *\\| *bro "
+  ]
+}

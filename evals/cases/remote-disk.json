@@ -1,0 +1,2 @@
+{"request": "check disk space on that server", "recent_commands": [{"command": "ssh deploy@203.0.113.5", "exit_status": 0}],
+ "accept": ["^ssh deploy@203\\.0\\.113\\.5 .?df -h.?$"]}

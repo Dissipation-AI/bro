@@ -1,0 +1,2 @@
+{"request": "how many words is my thesis", "folder": "~/research/thesis", "files": ["thesis.md", "refs.bib", "figures/"], "git": null,
+ "accept": ["^wc -w thesis\\.md$"]}

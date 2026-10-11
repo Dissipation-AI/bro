@@ -1,0 +1,2 @@
+{"request": "connect to the gpu box", "notes": "- My GPU box is the host lab-gpu (ssh config is set up).\n- I use uv, not pip.",
+ "accept": ["^ssh lab-gpu$"]}

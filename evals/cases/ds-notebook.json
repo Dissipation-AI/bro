@@ -1,0 +1,2 @@
+{"request": "start a notebook server here", "folder": "~/research/q3", "files": ["sales.csv", "analysis.ipynb"], "git": null,
+ "accept": ["^jupyter (lab|notebook)$"]}

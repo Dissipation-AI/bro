@@ -901,3 +901,183 @@
 2026-10-11T10:08:20	bro gemini-3.5-flash-lite	wipe-changes	PASS	935	git reset --hard HEAD
 2026-10-11T10:08:20	bro gemini-3.5-flash-lite	youtube-voice	PASS	785	open "https://www.youtube.com"
 2026-10-11T10:08:20	bro gemini-3.5-flash-lite	zip-src	PASS	928	zip -r src.zip src
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	ds-csv-columns	PASS	905	head -n 1 sales.csv
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	ds-notebook	PASS	1708	jupyter notebook
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	ds-conda-env	PASS	810	conda activate ml
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	ds-json-to-csv	FAIL	1067	python3 -c 'import csv, json, sys; data = json.load(open("results.json")); w = csv.writer(sys.stdout); w.writerow(data[0].keys()); [w.writerow(x.values()) for x in data]' > results.csv
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	research-arxiv	PASS	868	open "https://arxiv.org/search/?query=diffusion+models&searchtype=all"
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	dev-python-version	FAIL	931	pyenv version || python -V
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	remote-disk	PASS	861	ssh deploy@203.0.113.5 'df -h'
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	git-blame-line	PASS	888	git blame -L 40,40 app.py
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	research-wordcount	PASS	1125	wc -w thesis.md
+2026-10-11T10:25:24	bro gemini-3.5-flash-lite	remote-ssh-host	PASS	973	ssh gpu-box
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	ds-csv-columns	FAIL	3092	head -n 1 sales.csv | grep -A 1 -B 1 'column' | head -1
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	ds-notebook	FAIL	2232	docker run -d --name notebook-server \`docker-compose.yml\`
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	ds-conda-env	FAIL	1598	source .venv/bin/activate
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	ds-json-to-csv	FAIL	2150	cat results.json | grep -o 'results.json' > results.csv
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	research-arxiv	FAIL	2438	curl -s https://arxiv.org/search?query=diffusion+models | grep -i "papers"
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	dev-python-version	PASS	1734	python --version
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	remote-disk	FAIL	1710	du -sh ~/code/site
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	git-blame-line	FAIL	2270	cat app.py | grep -c 'author:' | grep -i 'line 40'
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	research-wordcount	FAIL	1583	wc -l thesis.md
+2026-10-11T10:26:02	bro apple-foundationmodel http://localhost:11434/v1	remote-ssh-host	FAIL	1897	echo 'No gpu box found. Use host machine or cloud.'
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	biggest-files	PASS	1016	du -h -s * | sort -hr | head -n 5
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	biggest-files	FAIL	3138	find ~/code/site -type f -exec du -s {} \; | sort -nr | head -5
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	brew-install-complete	FAIL	1759	brew install json
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	brew-install-complete	PASS	916	brew install jq
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	brew-list	FAIL	1761	brew list | grep -i homebrew
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	brew-list	PASS	815	brew list
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	bro-own-search	FAIL	2362	echo 'search_url=https://www.google.com' >> ~/.config/bro/config.toml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	bsd-sed	PASS	1792	sed -i '' 's/foo/bar/g' config.yml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	cd-back	FAIL	1645	cd ..
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	bro-own-search	PASS	802	bro config
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	cd-home	FAIL	1620	open ~/
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	bsd-sed	PASS	783	sed -i '' 's/foo/bar/g' config.yml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	changed-today	PASS	2548	find ~/code/site -name "*.json" -type f -mtime -1 -print | bro show
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	claude-tab	PASS	1766	ctx show "Claude - auth refactor"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	copy-folder	FAIL	1628	cp src src-backup
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	cd-back	PASS	864	cd -
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	copy-path	FAIL	1868	pbcopy <<\'' ; ~/code/site\''
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	cd-home	PASS	816	cd ~
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	count-lines	FAIL	2091	cat ~/code/site/src | wc -l
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	cpu-hog	PASS	1355	kill -9 4242
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	delete-logs-complete	FAIL	2134	find . -name '*.log' -exec rm -f {} +
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	changed-today	FAIL	803	git log --since=midnight --name-only --oneline
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	delete-node-modules	PASS	2341	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	claude-tab	PASS	772	ctx show "Claude - auth refactor"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	dev-python-version	FAIL	1940	cat pyproject.toml | bro change the web port to 8080
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	dev-server-tab-voice	PASS	1760	ctx show "Dev server"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	copy-folder	PASS	673	cp -r src src-backup
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	disk-space	PASS	1620	df -h /
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	docker-rm-complete	PASS	1944	docker run --rm -it ubuntu
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	copy-path	PASS	859	pwd | pbcopy
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	ds-conda-env	FAIL	1982	cd ~/code/ml && source ~/.config/bro/config.toml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	ds-csv-columns	FAIL	2097	cat sales.csv | grep -v "" | grep -o ''
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	count-lines	PASS	1226	find src -type f | xargs wc -l
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	ds-json-to-csv	FAIL	2132	cat results.json | sed -i '' 's/
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	ds-notebook	FAIL	2574	node -p "$(pgrep -f 'electron' -o | awk '{print $1}')" --server
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	cpu-hog	PASS	799	kill 4242
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	env-vars	FAIL	1694	env | bro show
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	explore-readme-typo	FAIL	2291	sed -i '' 's/Feature/Feature/' ~/code/site/README.md
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	delete-logs-complete	PASS	956	find . -name '*.log' -delete
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	ffmpeg-complete	PASS	1952	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	file-sizes	FAIL	2202	find ~/code/site -type f -exec ls -l {} \;
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	delete-node-modules	PASS	1014	find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	find-ctx-tab	FAIL	1925	ctx show "site"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	fix-git-identity	PASS	2315	git config --global user.email 'you@example.com' && git config --global user.name 'Your Name'
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	dev-python-version	PASS	797	python -V
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	fix-python-module	PASS	1930	pip3 install requests
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	fix-vite-missing	FAIL	1964	npm install --global vite
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	dev-server-tab-voice	PASS	962	ctx show "Dev server"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	folder-size	FAIL	1817	du -sh ~/code/site
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	disk-space	PASS	785	df -h /
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	folder-sizes-sorted	FAIL	2270	find . -type d -printf '%s%p' | sort -nr | head -5
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	follow-log	PASS	1949	tail -f ~/code/site/server.log
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	force-push	PASS	2077	git push --force-with-lease origin fix/typo
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	git-blame-line	FAIL	2581	cat ~/code/api/app.py | grep -c 'author' | grep -v 'sam' | grep -i 'wrote' | head -1
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	git-branch-question	PASS	1510	git branch
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	git-remote	PASS	1743	git remote -v
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	grep-todo	FAIL	2147	grep -i
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	hidden-files	PASS	1687	ls -A ~/code/site
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	home-space	FAIL	2260	du -sh ~/home/* 2>/dev/null | sort -hr | head -5
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	kill-ghostty	PASS	1466	kill -9 812
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	kill-node	FAIL	2039	kill -9 $(pgrep -f node)
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	kill-safari	PASS	1627	kill -9 3001
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	learned-notes	PASS	1696	code ~/Documents/notes
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	docker-rm-complete	PASS	896	docker run --rm -it ubuntu
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	mkdir-and-enter	PASS	1587	mkdir -p drafts && cd drafts
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	my-ip	FAIL	2557	curl -s ifconfig.io | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	ds-conda-env	PASS	799	conda activate ml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	new-branch	PASS	1843	git checkout -b feature/search
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	node-version	FAIL	1702	nvm status
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	ds-csv-columns	PASS	1146	head -n 1 sales.csv
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	open-in-finder	PASS	1658	open ~/code/site
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	open-spotify	PASS	1654	open -a "Spotify"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	ds-json-to-csv	PASS	948	jq -r '(.[0] | keys_unsorted), (.[] | map(.)) | @csv' results.json > results.csv
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	piped-bro-config	PASS	2404	sed -i '' 's/search_url=/https://www.google.com/search?q={query}/g' ~/.config/bro/config.toml
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	piped-kill-vite	PASS	1920	kill -9 5120
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	ds-notebook	PASS	808	jupyter notebook
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	png-to-jpg	FAIL	1564	convert logo.png -format jpg
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	port-3000	PASS	1706	lsof -i :3000
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	env-vars	PASS	975	env
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	project-in-cursor	PASS	1808	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	readme-textedit	FAIL	1836	open -a TextEdit ~/code/site/README.md
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	explore-readme-typo	FAIL	810	vim README.md
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	rebase-keep-mine	FAIL	2061	git rebase -i HEAD~1 --keep
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	remote-disk	FAIL	1807	df -h ~
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	ffmpeg-complete	PASS	953	ffmpeg -i talk.mov -c copy talk.mp4
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	remote-ssh-host	FAIL	1880	open -a 'ghostty' --new-window --remote-session
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	rename-jpeg	FAIL	2183	sed -i '' 's/.jpeg/.jpg/' ~/code/site/a.jpeg ~/code/site/b.jpeg
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	file-sizes	PASS	707	du -sh *
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	research-arxiv	PASS	2186	open -a brave https://search.brave.com/search?q=diffusion+models+arxiv
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	research-wordcount	FAIL	2527	wc -l thesis.md | grep -c 'word' | sed -i '' 's/word/line/g' > thesis_word_count.txt
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	find-ctx-tab	PASS	1131	ctx show "CTX spec writing"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	salsa-voice	PASS	1917	open "https://search.brave.com/search?q=salsa+dancing+videos"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	show-ports	FAIL	1751	lsof -i -t
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	fix-git-identity	PASS	808	git config user.email "you@example.com" && git config user.name "Your Name" && git commit -m "first"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	stop-port-8080	FAIL	2763	lsof -i :8080 | grep -v "Node" | awk '{print $1}' | xargs kill -9
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	sysadmin-agent	PASS	1857	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	fix-python-module	PASS	835	pip install -r requirements.txt
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	tail-log	FAIL	2117	tail -n +1 -25 ~/code/site/server.log
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	undo-commit	PASS	1833	git reset --soft HEAD~1
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	fix-vite-missing	PASS	933	npm install
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	unzip-into	PASS	1747	unzip -d out archive.zip
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	uptime	PASS	1639	uptime
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	folder-size	PASS	855	du -sh .
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	weather-voice	PASS	2130	open "https://search.brave.com/search?q=weather+in+~/code/site"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	whoami	FAIL	1639	echo \$USER
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	folder-sizes-sorted	PASS	810	du -sh * | sort -hr
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	why-cargo-failed	PASS	2031	cargo add serde && cargo build
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	wipe-changes	PASS	1715	git reset --hard
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	follow-log	PASS	688	tail -f server.log
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	youtube-voice	FAIL	1657	open -a "YouTube"
+2026-10-11T10:29:37	bro apple-foundationmodel http://localhost:11434/v1	zip-src	FAIL	1661	zip -r src/.
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	force-push	PASS	894	git push --force
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	git-blame-line	PASS	906	git blame -L 40,40 app.py
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	git-branch-question	PASS	865	git branch --show-current
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	git-remote	PASS	699	git remote get-url origin
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	grep-todo	PASS	832	grep -rn "TODO" src/
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	hidden-files	PASS	810	ls -la
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	home-space	PASS	853	du -h -d 1 ~ | sort -hr
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	kill-ghostty	PASS	912	kill 812
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	kill-node	PASS	777	kill -9 4120
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	kill-safari	PASS	986	kill -9 3001
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	learned-notes	FAIL	760	open -a "Notes"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	mkdir-and-enter	PASS	772	mkcd drafts
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	my-ip	PASS	807	curl ifconfig.me
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	new-branch	PASS	1021	git checkout -b feature/search
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	node-version	PASS	838	node -v
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	open-in-finder	PASS	848	open .
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	open-spotify	PASS	772	open -a "Spotify"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	piped-bro-config	PASS	946	sed -i '' 's|search_url = ".*"|search_url = "https://www.google.com/search?q={query}"|' ~/.config/bro/config.toml
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	piped-kill-vite	PASS	1081	kill 5120
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	png-to-jpg	PASS	982	sips -s format jpeg logo.png --out logo.jpg
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	port-3000	PASS	741	lsof -i :3000
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	project-in-cursor	PASS	812	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	readme-textedit	PASS	1093	open -a TextEdit README.md
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	rebase-keep-mine	FAIL	950	git rebase --onto main
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	remote-disk	PASS	877	ssh deploy@203.0.113.5 'df -h'
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	remote-ssh-host	PASS	971	ssh gpu
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	rename-jpeg	PASS	1402	for f in *.jpeg; do mv "$f" "${f%.jpeg}.jpg"; done
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	research-arxiv	PASS	712	open "https://search.brave.com/search?q=diffusion+models+papers+arxiv"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	research-wordcount	PASS	806	wc -w thesis.md
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	salsa-voice	PASS	840	open "https://search.brave.com/search?q=videos+about+salsa+dancing"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	show-ports	PASS	905	lsof -i -P -n | grep LISTEN
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	stop-port-8080	PASS	704	kill -9 $(lsof -ti:8080)
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	sysadmin-agent	PASS	1161	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	tail-log	PASS	889	tail -n 50 server.log
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	undo-commit	PASS	843	git reset --soft HEAD~1
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	unzip-into	PASS	777	unzip archive.zip -d out
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	uptime	PASS	765	uptime
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	weather-voice	PASS	682	curl wttr.in
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	whoami	PASS	827	echo $USER
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	why-cargo-failed	PASS	797	cargo add serde
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	wipe-changes	PASS	1077	git reset --hard
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	youtube-voice	PASS	901	open "https://www.youtube.com"
+2026-10-11T10:29:37	bro gemini-3.5-flash-lite	zip-src	PASS	923	zip -r src.zip src
+2026-10-11T10:36:20	bro gemini-3.5-flash-lite	notes-gpu-host	PASS	930	ssh lab-gpu
+2026-10-11T10:36:20	bro gemini-3.5-flash-lite	notes-uv	PASS	795	uv add requests
+2026-10-11T10:36:20	bro gemini-3.5-flash-lite	remember-staging	PASS	852	echo '- my staging server is 10.20.0.8' >> ~/.config/bro/bro.md
+2026-10-11T10:36:29	bro apple-foundationmodel http://localhost:11434/v1	notes-gpu-host	FAIL	2458	ssh -p 2222 sam@lab-gpu
+2026-10-11T10:36:29	bro apple-foundationmodel http://localhost:11434/v1	notes-uv	FAIL	1867	uv install requests
+2026-10-11T10:36:29	bro apple-foundationmodel http://localhost:11434/v1	remember-staging	PASS	2362	echo '- staging server: 10.20.0.8' >> ~/.config/bro/bro.md

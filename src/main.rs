@@ -202,6 +202,7 @@ fn main() -> ExitCode {
         None => {
             let mut c = context::gather(&request, &line, context::ShellState::from_env(), &config, &mut timings);
             c.earlier_piped = context::piped::earlier(&session);
+            c.notes = read_notes();
             c.piped = piped.clone();
             c
         }
@@ -321,6 +322,14 @@ fn print_explanation(explanation: &str, dangerous: bool) {
         (false, true) => writeln!(e, "\x1b[2m{explanation}\x1b[0m"),
         _ => writeln!(e, "{explanation}"),
     };
+}
+
+/// `~/.config/bro/bro.md`, if there is one (its start, if it's huge).
+fn read_notes() -> String {
+    let Ok(file) = std::fs::File::open(config::notes_path()) else { return String::new() };
+    let mut text = String::new();
+    let _ = file.take(64 * 1024).read_to_string(&mut text);
+    text
 }
 
 fn load_config(args: &Args) -> Result<Config, String> {

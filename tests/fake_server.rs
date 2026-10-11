@@ -295,3 +295,18 @@ fn piped_answer_goes_to_the_next_prompt_with_the_integration() {
     let pending = std::fs::read_to_string(sb.home.join("Library/Caches/bro/pending/4242")).unwrap();
     assert_eq!(pending, "ok\nopen -a Safari\nOpens Safari.\nopen it\n");
 }
+
+#[test]
+fn bro_md_is_part_of_the_instructions() {
+    let server = serve(&answer("ssh lab-gpu", "Connects to the GPU box."), Duration::ZERO);
+    let sb = Sandbox::new("bromd", &server.url);
+    std::fs::write(sb.home.join(".config/bro/bro.md"), "- My GPU box is `ssh lab-gpu`.\n").unwrap();
+    let mut c = sb.command();
+    c.args(["connect", "to", "the", "gpu", "box"]);
+    let o = run(c);
+    assert_eq!(stdout(&o), "ssh lab-gpu\n");
+    let requests = server.requests.lock().unwrap();
+    let body: serde_json::Value = serde_json::from_str(&requests[0]).unwrap();
+    let system = body["messages"][0]["content"].as_str().unwrap();
+    assert!(system.contains("- My GPU box is `ssh lab-gpu`."), "{system}");
+}

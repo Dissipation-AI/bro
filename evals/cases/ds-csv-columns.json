@@ -1,0 +1,2 @@
+{"request": "what columns does sales.csv have", "folder": "~/research/q3", "files": ["sales.csv", "notes.md", "analysis.ipynb"], "git": null,
+ "accept": ["^head -n ?1 sales\\.csv$", "^head -1 sales\\.csv$", "^csvcut -n sales\\.csv$", "^sed -n .?1p.? sales\\.csv$"]}

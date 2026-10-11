@@ -55,86 +55,26 @@ pub fn answer_text(command: &str, explanation: &str) -> String {
     format!("{{\"command\": {}, \"explanation\": {}, \"confidence\": \"high\"}}", q(command), q(explanation))
 }
 
-/// What the request is about, from its words. Decides which rules and sections are shown.
+/// The request's words, for matching names in the context and picking examples. Which rules and
+/// examples apply is decided by what the context holds, never by lists of keywords.
 struct Topics {
     words: Vec<String>,
-    raw: Vec<String>,
 }
 
 impl Topics {
     fn new(c: &Context) -> Topics {
-        let text = format!("{} {}", c.request, c.line);
-        let raw = text
-            .split(|ch: char| !ch.is_alphanumeric() && ch != '\'')
-            .filter(|w| !w.is_empty())
-            .map(|w| w.to_lowercase().replace('\'', ""))
-            .collect();
-        Topics { words: context::request_words(&text), raw }
-    }
-    fn any(&self, list: &[&str]) -> bool {
-        self.raw.iter().any(|w| list.contains(&w.as_str()))
-    }
-    fn about_processes(&self, c: &Context) -> bool {
-        self.any(&[
-            "kill",
-            "stop",
-            "quit",
-            "close",
-            "process",
-            "processes",
-            "cpu",
-            "memory",
-            "ram",
-            "running",
-            "hang",
-            "hanging",
-            "frozen",
-            "freeze",
-            "stuck",
-            "slow",
-            "hog",
-            "hogging",
-            "eating",
-            "using",
-            "restart",
-            "pid",
-            "port",
-            "busy",
-            "fan",
-            "heavy",
-            "terminate",
-            "end",
-        ]) || c.processes.iter().any(|p| context::relevant(&p.name, &self.words))
-    }
-    fn about_tabs(&self, c: &Context) -> bool {
-        self.any(&[
-            "tab", "tabs", "terminal", "session", "sessions", "window", "shell", "switch", "show", "find", "take", "go",
-        ]) || c.tabs.iter().any(|t| context::relevant(&t.name, &self.words))
-    }
-    fn about_last_command(&self) -> bool {
-        self.any(&[
-            "fail", "failed", "failing", "error", "errors", "why", "fix", "it", "that", "output", "again", "broken",
-            "wrong", "retry", "worked", "work",
-        ])
-    }
-    /// About bro itself ("change your config", "bro's search engine").
-    fn about_bro(&self) -> bool {
-        self.any(&["bro", "bros", "your", "yourself"])
-    }
-    fn about_search(&self) -> bool {
-        self.any(&[
-            "search", "web", "browser", "google", "look", "lookup", "website", "online", "internet", "videos", "video",
-        ])
-    }
-    fn about_opening(&self) -> bool {
-        self.any(&["open", "launch", "start", "run", "agent", "app", "application", "edit", "editor"])
+        Topics { words: context::request_words(&format!("{} {}", c.request, c.line)) }
     }
 }
 
 pub fn build(context: &Context, config: &Config) -> Vec<Message> {
     let topics = Topics::new(context);
     let last_failed = context.recent_commands.last().and_then(|r| r.exit_status).is_some_and(|s| s != 0);
-    let system = system_prompt(config, &topics, context, last_failed);
+    let mut system = system_prompt(config, context, last_failed);
+    if let Some(notes) = notes(context, config) {
+        system.push_str("\n\nThis person's own notes for you, from ~/.config/bro/bro.md. Follow them; they come before the rules above:\n");
+        system.push_str(&notes);
+    }
     let mut messages = vec![Message { role: "system", content: system }];
 
     for Shown { context: ex_context, line, request, command, explanation } in examples(context, config) {
@@ -156,8 +96,23 @@ pub fn build(context: &Context, config: &Config) -> Vec<Message> {
     messages
 }
 
+/// bro.md, cut to whole lines within its share of the budget.
+fn notes(c: &Context, config: &Config) -> Option<String> {
+    let max_tokens = if config.small() { 400 } else { 1_500 };
+    let mut out = String::new();
+    for line in c.notes.trim().lines() {
+        if estimate_tokens(&out) + estimate_tokens(line) > max_tokens {
+            break;
+        }
+        out.push_str(line);
+        out.push('\n');
+    }
+    let out = out.trim_end().to_string();
+    (!out.is_empty()).then_some(out)
+}
+
 /// Instructions with only the `[tag]` rules that apply.
-fn system_prompt(config: &Config, topics: &Topics, c: &Context, last_failed: bool) -> String {
+fn system_prompt(config: &Config, c: &Context, last_failed: bool) -> String {
     let search_rule = if config.browser.is_empty() || config.browser == "default" {
         format!("open \"{}\"", config.search_url.replace("{query}", "WORDS"))
     } else {
@@ -169,16 +124,13 @@ fn system_prompt(config: &Config, topics: &Topics, c: &Context, last_failed: boo
             None => Some(line.to_string()),
             Some((tag, rule)) => {
                 let applies = match tag {
-                    "failed" => last_failed && (topics.about_last_command() || c.line.is_empty()),
+                    "failed" => last_failed,
                     "line" => !c.line.trim().is_empty(),
-                    "tabs" => !c.tabs.is_empty() && topics.about_tabs(c),
-                    "search" => topics.about_search(),
-                    "open" => topics.about_opening(),
+                    "tabs" => !c.tabs.is_empty(),
                     "manual" => !c.manuals.is_empty(),
                     "programs" => !c.programs.is_empty(),
                     "learned" => !c.examples.is_empty(),
                     "piped" => c.piped.is_some(),
-                    "self" => topics.about_bro(),
                     _ => true,
                 };
                 applies.then(|| rule.to_string())
@@ -257,19 +209,19 @@ enum Shape {
     Processes,
     Failed,
     Line,
-    Search,
+    Piped,
 }
 
 fn shapes_of_request(c: &Context) -> Vec<Shape> {
-    let topics = Topics::new(c);
+    let words = Topics::new(c).words;
     let mut v = Vec::new();
     if !c.programs.is_empty() {
         v.push(Shape::Programs);
     }
-    if !c.tabs.is_empty() && topics.about_tabs(c) {
+    if !c.tabs.is_empty() {
         v.push(Shape::Tabs);
     }
-    if !c.processes.is_empty() && topics.about_processes(c) {
+    if c.processes.iter().any(|p| context::relevant(&p.name, &words)) {
         v.push(Shape::Processes);
     }
     if c.recent_commands.last().and_then(|r| r.exit_status).is_some_and(|s| s != 0) {
@@ -278,8 +230,8 @@ fn shapes_of_request(c: &Context) -> Vec<Shape> {
     if !c.line.trim().is_empty() {
         v.push(Shape::Line);
     }
-    if topics.about_search() {
-        v.push(Shape::Search);
+    if c.piped.is_some() {
+        v.push(Shape::Piped);
     }
     v
 }
@@ -301,8 +253,8 @@ fn shapes_of_example(ex: &BuiltIn) -> Vec<Shape> {
     if !ex.line.is_empty() {
         v.push(Shape::Line);
     }
-    if ex.command.contains("{search:") {
-        v.push(Shape::Search);
+    if ex.context.contains("Piped into bro") {
+        v.push(Shape::Piped);
     }
     v
 }
@@ -691,8 +643,9 @@ mod tests {
     fn rules_only_when_they_apply() {
         let config = Config::default();
         let plain = build(&ctx("list files"), &config);
+        // Rules about kinds of context appear only when that context is there; never by keyword.
         assert!(!plain[0].content.contains("ctx show"));
-        assert!(!plain[0].content.contains("search the web"));
+        assert!(!plain[0].content.contains("Typed so far"));
         let mut c = ctx("show me the dev server tab");
         c.tabs = vec![Tab { number: 42, name: "Dev server".into(), folder: "~".into(), running: None }];
         let m = build(&c, &config);
@@ -714,11 +667,21 @@ mod tests {
         assert!(user.starts_with("Piped into bro, the output of `cat ~/.config/bro/config.toml`:"), "{user}");
         assert!(user.contains("line 1\n") && user.contains("line 300") && user.contains(" lines skipped)"), "{user}");
         assert!(m[0].content.contains("Don't pipe it into bro again"));
-        assert!(!m[0].content.contains("You are bro. Your settings"));
 
         let m = build(&ctx("change your default web search to google"), &Config::default());
         assert!(m[0].content.contains("~/.config/bro/config.toml"));
         assert!(!m[0].content.contains("Don't pipe it into bro again"));
+    }
+
+    #[test]
+    fn notes_from_bro_md_are_followed_within_their_budget() {
+        let mut c = ctx("connect to the gpu box");
+        c.notes = "My GPU box is `ssh lab-gpu`.\n".to_string() + &"- filler line\n".repeat(2000);
+        let m = build(&c, &Config::default());
+        assert!(m[0].content.contains("notes for you, from ~/.config/bro/bro.md"));
+        assert!(m[0].content.contains("My GPU box is `ssh lab-gpu`."));
+        assert!(estimate_tokens(&m[0].content) < 2_000, "bro.md is capped");
+        assert!(!build(&ctx("list files"), &Config::default())[0].content.contains("notes for you"));
     }
 
     #[test]
