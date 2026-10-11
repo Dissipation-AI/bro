@@ -1,0 +1,2 @@
+{"request": "", "line": "git rebase onto main but keep my",
+ "accept": ["^git rebase (.*-X ?theirs|.*--strategy-option[= ]theirs).*main", "^git rebase main (-X ?theirs|--strategy-option[= ]theirs)"]}

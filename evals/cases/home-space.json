@@ -1,0 +1,7 @@
+{
+ "request": "what's taking up space in my home folder",
+ "accept": [
+  "^du -[a-z]*s[a-z]*h[a-z]* ~/\\* *\\| *sort -[a-z]*h[a-z]*",
+  "^du -h -d ?1 ~/? *\\| *sort -[a-z]*h[a-z]*"
+ ]
+}

@@ -1,0 +1,4 @@
+{"request": "why did that fail, fix it",
+ "folder": "~/code/tool", "files": ["Cargo.lock", "Cargo.toml", "src/", "target/"], "files_total": 4,
+ "recent_commands": [{"command": "cargo build", "exit_status": 101, "output": "   Compiling tool v0.1.0 (/Users/c/code/tool)\nerror[E0432]: unresolved import `serde`\n --> src/main.rs:1:5\n  |\n1 | use serde::Deserialize;\n  |     ^^^^^ use of unresolved module or unlinked crate `serde`\n  |\n  = help: if you wanted to use a crate named `serde`, use `cargo add serde` to add it to your `Cargo.toml`\n\nFor more information about this error, try `rustc --explain E0432`.\nerror: could not compile `tool` (bin \"tool\") due to 1 previous error"}],
+ "accept": ["^cargo add serde"]}

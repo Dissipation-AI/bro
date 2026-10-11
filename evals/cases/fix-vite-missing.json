@@ -1,0 +1,14 @@
+{
+ "request": "fix it",
+ "recent_commands": [
+  {
+   "command": "npm run dev",
+   "exit_status": 127,
+   "output": "> site@0.1.0 dev\n> vite\n\nsh: vite: command not found"
+  }
+ ],
+ "accept": [
+  "^npm (install|i|ci)( -D vite| --prefix [^ ]+)?$",
+  "^npm (install|i) (--save-dev|-D) vite$"
+ ]
+}

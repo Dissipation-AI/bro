@@ -1,0 +1,275 @@
+{
+  "folder": "~/code/site",
+  "git": {
+    "branch": "main",
+    "status": "2 modified"
+  },
+  "files": [
+    "README.md",
+    "config.yml",
+    "node_modules/",
+    "package-lock.json",
+    "package.json",
+    "public/",
+    "src/",
+    "vite.config.js"
+  ],
+  "files_total": 8,
+  "processes": [
+    {
+      "name": "WindowServer",
+      "pid": 402,
+      "cpu_percent": 6.1,
+      "memory_mb": 610,
+      "cpu_average": true
+    },
+    {
+      "name": "Google Chrome Helper (Renderer)",
+      "pid": 2231,
+      "cpu_percent": 3.4,
+      "memory_mb": 540,
+      "cpu_average": true
+    },
+    {
+      "name": "Google Chrome",
+      "pid": 2201,
+      "cpu_percent": 0.8,
+      "memory_mb": 420,
+      "cpu_average": true
+    },
+    {
+      "name": "Slack Helper (Renderer)",
+      "pid": 2412,
+      "cpu_percent": 1.9,
+      "memory_mb": 380,
+      "cpu_average": true
+    },
+    {
+      "name": "Slack",
+      "pid": 2405,
+      "cpu_percent": 0.6,
+      "memory_mb": 210,
+      "cpu_average": true
+    },
+    {
+      "name": "Code Helper (Plugin)",
+      "pid": 3310,
+      "cpu_percent": 2.2,
+      "memory_mb": 350,
+      "cpu_average": true
+    },
+    {
+      "name": "Electron",
+      "pid": 3301,
+      "cpu_percent": 0.9,
+      "memory_mb": 290,
+      "cpu_average": true
+    },
+    {
+      "name": "ghostty",
+      "pid": 1880,
+      "cpu_percent": 1.1,
+      "memory_mb": 260,
+      "cpu_average": true
+    },
+    {
+      "name": "Spotify",
+      "pid": 2650,
+      "cpu_percent": 0.7,
+      "memory_mb": 240,
+      "cpu_average": true
+    },
+    {
+      "name": "mds_stores",
+      "pid": 512,
+      "cpu_percent": 1.4,
+      "memory_mb": 120,
+      "cpu_average": true
+    },
+    {
+      "name": "Finder",
+      "pid": 610,
+      "cpu_percent": 0.2,
+      "memory_mb": 150,
+      "cpu_average": true
+    },
+    {
+      "name": "Dock",
+      "pid": 604,
+      "cpu_percent": 0.1,
+      "memory_mb": 90,
+      "cpu_average": true
+    },
+    {
+      "name": "node",
+      "pid": 4120,
+      "cpu_percent": 0.5,
+      "memory_mb": 180,
+      "cpu_average": true
+    },
+    {
+      "name": "postgres",
+      "pid": 901,
+      "cpu_percent": 0.3,
+      "memory_mb": 60,
+      "cpu_average": true
+    },
+    {
+      "name": "com.docker.backend",
+      "pid": 1102,
+      "cpu_percent": 0.8,
+      "memory_mb": 330,
+      "cpu_average": true
+    },
+    {
+      "name": "zsh",
+      "pid": 1902,
+      "cpu_percent": 0.0,
+      "memory_mb": 8,
+      "cpu_average": true
+    },
+    {
+      "name": "kernel_task",
+      "pid": 0,
+      "cpu_percent": null,
+      "memory_mb": null
+    }
+  ],
+  "apps": [
+    "Activity Monitor",
+    "App Store",
+    "Calculator",
+    "Calendar",
+    "Docker",
+    "Finder",
+    "FaceTime",
+    "Figma",
+    "Ghostty",
+    "Google Chrome",
+    "Mail",
+    "Maps",
+    "Messages",
+    "Music",
+    "Notes",
+    "Notion",
+    "Obsidian",
+    "Photos",
+    "Postman",
+    "Preview",
+    "Reminders",
+    "Safari",
+    "Slack",
+    "Spotify",
+    "System Settings",
+    "TextEdit",
+    "Visual Studio Code",
+    "Xcode",
+    "zoom.us",
+    "1Password"
+  ],
+  "default_browser": "Google Chrome",
+  "system": {
+    "macos": "26.1",
+    "arch": "arm64",
+    "shell": "zsh",
+    "terminal": "ghostty"
+  },
+  "environment": [
+    [
+      "EDITOR",
+      "vim"
+    ],
+    [
+      "HOME",
+      "/Users/sam"
+    ],
+    [
+      "HOMEBREW_PREFIX",
+      "/opt/homebrew"
+    ],
+    [
+      "LANG",
+      "en_US.UTF-8"
+    ],
+    [
+      "NVM_DIR",
+      "/Users/sam/.nvm"
+    ],
+    [
+      "PAGER",
+      "less"
+    ],
+    [
+      "PATH",
+      "/opt/homebrew/bin:/Users/sam/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    ],
+    [
+      "SHELL",
+      "/bin/zsh"
+    ],
+    [
+      "TERM",
+      "xterm-ghostty"
+    ],
+    [
+      "TERM_PROGRAM",
+      "ghostty"
+    ],
+    [
+      "USER",
+      "sam"
+    ],
+    [
+      "AWS_PROFILE",
+      "dev"
+    ],
+    [
+      "GITHUB_TOKEN",
+      null
+    ],
+    [
+      "OPENAI_API_KEY",
+      null
+    ],
+    [
+      "GOPATH",
+      "/Users/sam/go"
+    ],
+    [
+      "JAVA_HOME",
+      null
+    ],
+    [
+      "SSH_AUTH_SOCK",
+      null
+    ]
+  ],
+  "aliases": [
+    "ll",
+    "la",
+    "gs",
+    "gd",
+    "gco",
+    "gp",
+    "k",
+    "dc",
+    "py"
+  ],
+  "functions": [
+    "mkcd",
+    "extract",
+    "nvm",
+    "take"
+  ],
+  "projects": [
+    "~/code",
+    "~/code/site",
+    "~/code/api",
+    "~/code/dotfiles",
+    "~/code/mobile-app",
+    "~/code/infra",
+    "~/code/blog",
+    "~/notes",
+    "~/scripts"
+  ]
+}

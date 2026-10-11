@@ -1,0 +1,7 @@
+{
+ "request": "stop whatever is running on port 8080",
+ "accept": [
+  "^lsof -[a-zA-Z]*t[a-zA-Z]* .*8080.*\\| *xargs kill",
+  "^kill( -[0-9A-Z]+)? \\$\\(lsof -[a-zA-Z]*t.*8080.*\\)$"
+ ]
+}

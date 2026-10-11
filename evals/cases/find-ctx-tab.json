@@ -1,0 +1,5 @@
+{"request": "find the terminal session where I am working on project ctx",
+ "tabs": [{"number": 40, "name": "Dev server", "folder": "~/code/site", "running": "npm run dev"},
+          {"number": 41, "name": "CTX spec writing", "folder": "~/Workspaces/charles-terminal-experience", "running": "claude"},
+          {"number": 43, "name": "Notes", "folder": "~"}],
+ "accept": ["^ctx show (\"CTX spec writing\"|tab 41)$"]}

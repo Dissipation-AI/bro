@@ -1,0 +1,15 @@
+{
+ "request": "watch the server log as it grows",
+ "files": [
+  "README.md",
+  "package.json",
+  "server.log",
+  "src/"
+ ],
+ "files_total": 4,
+ "accept": [
+  "^tail -[fF] (~/code/site/)?server\\.log$",
+  "^tail -n ?[0-9]+ -[fF] (~/code/site/)?server\\.log$",
+  "^less \\+F server\\.log$"
+ ]
+}

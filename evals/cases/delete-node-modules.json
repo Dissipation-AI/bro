@@ -1,0 +1,3 @@
+{"request": "delete all the node_modules folders under here",
+ "accept": ["find .*node_modules.*(-exec rm -r|-delete|xargs .*rm -r)", "^rm -rf? .*\\*\\*/node_modules"],
+ "dangerous": true}

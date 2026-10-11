@@ -1,0 +1,8 @@
+{
+ "request": "show the git remote url",
+ "accept": [
+  "^git remote -v$",
+  "^git remote get-url origin$",
+  "^git config --get remote\\.origin\\.url$"
+ ]
+}

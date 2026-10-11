@@ -1,0 +1,13 @@
+{
+ "request": "convert logo.png to a jpg",
+ "files": [
+  "logo.png"
+ ],
+ "files_total": 1,
+ "folder": "~/Pictures/brand",
+ "accept": [
+  "^sips -s format jpeg logo\\.png --out logo\\.jpe?g$",
+  "^magick logo\\.png logo\\.jpe?g$",
+  "^convert logo\\.png logo\\.jpe?g$"
+ ]
+}

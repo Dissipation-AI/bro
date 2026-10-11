@@ -1,0 +1,46 @@
+2026-10-10T23:24:41	apfel-cmd	biggest-files	PASS	1149	ls -la | sort -k5 -nr | head -n 5
+2026-10-10T23:24:41	apfel-cmd	bsd-sed	FAIL	756	sed -i 's/foo/bar/g' config.yml
+2026-10-10T23:24:41	apfel-cmd	changed-today	PASS	679	git status --show-time --brief
+2026-10-10T23:24:41	apfel-cmd	count-lines	FAIL	244579	
+2026-10-10T23:24:41	apfel-cmd	cpu-hog	FAIL	1427	# macOS shell command to kill CPU-consuming processes ; kill -9 $(pgrep -A "cpu" | grep -v "grep" | awk '{print $1}')
+2026-10-10T23:24:41	apfel-cmd	delete-node-modules	PASS	1201	sh -c 'find . -type d -name "node_modules" -exec rm -rf {} +'
+2026-10-10T23:24:41	apfel-cmd	dev-server-tab-voice	FAIL	829	# Displays the current directory and highlights the tab with the dev server ; ls -laT
+2026-10-10T23:24:41	apfel-cmd	disk-space	PASS	557	df -h /
+2026-10-10T23:24:41	apfel-cmd	ffmpeg-complete	PASS	853	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-10T23:24:41	apfel-cmd	find-ctx-tab	FAIL	560	ps aux | grep ctx
+2026-10-10T23:24:41	apfel-cmd	fix-python-module	FAIL	554	git checkout -c HEAD
+2026-10-10T23:24:41	apfel-cmd	force-push	FAIL	611	git push --force origin main
+2026-10-10T23:24:41	apfel-cmd	git-branch-question	FAIL	520	git branch ; ```markdown-shell
+2026-10-10T23:24:41	apfel-cmd	kill-ghostty	FAIL	809	kill -9 $(pgrep -a ghostty)
+2026-10-10T23:24:41	apfel-cmd	learned-notes	FAIL	532	open -a Notes
+2026-10-10T23:24:41	apfel-cmd	my-ip	FAIL	690	ip a ; ```json{language:"bash"}
+2026-10-10T23:24:41	apfel-cmd	open-spotify	FAIL	649	#!/bin/bash ; open -a Spotify
+2026-10-10T23:24:41	apfel-cmd	port-3000	PASS	678	lsof -i :3000
+2026-10-10T23:24:41	apfel-cmd	project-in-cursor	FAIL	578	open ~/bro/project/
+2026-10-10T23:24:41	apfel-cmd	rebase-keep-mine	FAIL	661	git rebase -i main --keep
+2026-10-10T23:24:41	apfel-cmd	salsa-voice	FAIL	1086	#!/bin/bash ; open -a Safari --url "https://www.youtube.com/search?q=salsa+dancing"
+2026-10-10T23:24:41	apfel-cmd	sysadmin-agent	FAIL	745	open -a "My Personal Sysadmin Agent"
+2026-10-10T23:24:41	apfel-cmd	undo-commit	FAIL	731	git reset --soft HEAD~1 ; ```yaml ; shell
+2026-10-10T23:24:41	apfel-cmd	why-cargo-failed	FAIL	735	# sh ; chmod +x script.sh && ./script.sh
+2026-10-10T23:24:41	apfel-cmd	zip-src	PASS	634	zip -r src.zip src
+2026-10-10T23:38:42	apfel-cmd	uptime whoami brew-list readme-textedit env-vars copy-folder png-to-jpg file-sizes cd-back cd-home node-version git-remote new-branch folder-sizes-sorted kill-safari home-space fix-git-identity delete-logs-complete youtube-voice show-ports	FAIL	15	
+2026-10-10T23:39:09	apfel-cmd	uptime	FAIL	528	uptime -p
+2026-10-10T23:39:09	apfel-cmd	whoami	FAIL	553	shell ; echo $USER
+2026-10-10T23:39:09	apfel-cmd	brew-list	PASS	493	brew list
+2026-10-10T23:39:09	apfel-cmd	readme-textedit	PASS	689	open -a TextEdit README.md
+2026-10-10T23:39:09	apfel-cmd	env-vars	PASS	462	env
+2026-10-10T23:39:09	apfel-cmd	copy-folder	PASS	642	cp -r src src-backup
+2026-10-10T23:39:09	apfel-cmd	png-to-jpg	FAIL	669	convert logo.png jpeg -quality 90
+2026-10-10T23:39:09	apfel-cmd	file-sizes	FAIL	582	du -h /*
+2026-10-10T23:39:09	apfel-cmd	cd-back	FAIL	461	cd ../
+2026-10-10T23:39:09	apfel-cmd	cd-home	FAIL	556	cd ~ ; ```markdown-shell
+2026-10-10T23:39:09	apfel-cmd	node-version	FAIL	554	node -v ; ```json
+2026-10-10T23:39:09	apfel-cmd	git-remote	FAIL	632	git remote -v ; ```markdown-bash
+2026-10-10T23:39:09	apfel-cmd	new-branch	FAIL	718	git checkout -b feature/search && git switch feature/search
+2026-10-10T23:39:09	apfel-cmd	folder-sizes-sorted	FAIL	738	du -h --max-depth=1 /
+2026-10-10T23:39:09	apfel-cmd	kill-safari	PASS	690	killall -9 "Safari"
+2026-10-10T23:39:09	apfel-cmd	home-space	FAIL	957	df -h ~ | sort -hr | head -20
+2026-10-10T23:39:09	apfel-cmd	fix-git-identity	FAIL	785	git reset --hard && git clean -x --permanent
+2026-10-10T23:39:09	apfel-cmd	delete-logs-complete	PASS	741	find . -name '*.log' -exec rm {} +
+2026-10-10T23:39:09	apfel-cmd	youtube-voice	FAIL	669	#!/bin/bash ; open -a YouTube
+2026-10-10T23:39:09	apfel-cmd	show-ports	PASS	745	lsof -i -P -n | grep LISTEN

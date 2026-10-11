@@ -1,0 +1,14 @@
+{
+ "request": "list the five biggest files in this folder",
+ "accept": [
+  "du .*\\| *sort -[a-z]*h[a-z]* *\\| *head -(n ?)?5$",
+  "ls -[a-zA-Z]*S[a-zA-Z]*( \\.)? *\\| *head -(n ?)?[56]$",
+  "ls -l.*\\| *sort .*-k ?5.*\\| *head -(n ?)?5$",
+  "find .*-exec (du|ls -l[a-z]*|stat -f[^|]*) .*\\| *sort .*\\| *head -(n ?)?5$"
+ ],
+ "reject": [
+  "stat -c",
+  "--max-depth",
+  "\\| *sort -nr *\\| *head"
+ ]
+}

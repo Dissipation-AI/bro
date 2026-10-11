@@ -1,0 +1,7 @@
+{
+ "request": "Bro, what's the weather like?",
+ "accept": [
+  "^curl .*wttr\\.in",
+  "^open .*weather"
+ ]
+}

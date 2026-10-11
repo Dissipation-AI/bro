@@ -1,0 +1,14 @@
+{
+ "request": "show the last 50 lines of the server log",
+ "files": [
+  "README.md",
+  "package.json",
+  "server.log",
+  "src/"
+ ],
+ "files_total": 4,
+ "accept": [
+  "^tail -n ?50 server\\.log$",
+  "^tail -50 server\\.log$"
+ ]
+}

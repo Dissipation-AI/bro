@@ -1,0 +1,4 @@
+{"request": "open my personal sysadmin agent",
+ "projects": ["~/Agents/sys-admin"],
+ "programs": ["~/Agents/sys-admin/bin/sysadmin-agent", "~/Agents/sys-admin/install.sh"],
+ "accept": ["^(~|\\$HOME|/Users/[a-z]+)/Agents/sys-admin/bin/sysadmin-agent$"]}

@@ -1,0 +1,10 @@
+{
+ "request": "throw away all my uncommitted changes",
+ "accept": [
+  "^git reset --hard( HEAD)?$",
+  "^git checkout -- \\.$",
+  "^git restore \\.$",
+  "^git reset --hard( HEAD)? && git clean -[a-z]*f[a-z]*$"
+ ],
+ "dangerous": true
+}

@@ -1,0 +1,4 @@
+{"request": "open the bro project in cursor",
+ "apps": ["Cursor"],
+ "projects": ["~/Workspaces/charles-terminal-experience/bro"],
+ "accept": ["^open -a \"?Cursor\"? ~/Workspaces/charles-terminal-experience/bro/?$", "^cursor ~/Workspaces/charles-terminal-experience/bro/?$"]}

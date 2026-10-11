@@ -1,0 +1,383 @@
+# Built-in examples. The few most similar to a request (by shared words) are shown to the model
+# before the real request; small models follow examples better than rules.
+#
+# A small model knows macOS commands poorly ("not optimized for code", says Apple), so this bank
+# is a little tldr: correct BSD/macOS commands for common tasks, retrieved by similarity.
+# Every command must work on a stock Mac. Keep specifics (file names, numbers) different from the
+# eval cases in evals/cases/, so the evals measure adapting an example, not recalling one.
+# `{search_url}` is replaced with the configured search URL, query included.
+
+[[example]]
+context = "Running processes:\n  Slack (pid 2210) cpu 0.4%, memory 380 MB\n  Slack Helper (pid 2214) cpu 1.2%, memory 210 MB"
+request = "close slack it's frozen"
+command = "pkill -i slack"
+explanation = "Stops every process whose name contains slack."
+
+[[example]]
+request = "search the web for sourdough starter recipes"
+command = "open \"{search:sourdough starter recipes}\""
+explanation = "Opens a web search for sourdough starter recipes."
+
+[[example]]
+context = "Open tabs:\n  tab 12 \"API server\" in ~/code/api, running npm run dev\n  tab 15 \"Notes\" in ~"
+request = "take me to the terminal running my api"
+command = "ctx show \"API server\""
+explanation = "Brings the API server tab to the front."
+
+[[example]]
+context = "Projects: ~/code/blog\nApps: Visual Studio Code"
+request = "open my blog project in vs code"
+command = "open -a \"Visual Studio Code\" ~/code/blog"
+explanation = "Opens the blog folder in Visual Studio Code."
+
+[[example]]
+context = "Commands already run here, oldest first:\n$ git push\n  exit status 128\n  output:\n    fatal: The current branch feature/login has no upstream branch.\n    To push the current branch and set the remote as upstream, use\n\n        git push --set-upstream origin feature/login"
+request = "fix it"
+command = "git push --set-upstream origin feature/login"
+explanation = "Pushes feature/login and sets its upstream on origin."
+
+[[example]]
+line = "tar -czf backup.tgz but leave out the node"
+request = "finish or fix this command line"
+command = "tar --exclude=node_modules -czf backup.tgz ."
+explanation = "Archives this folder into backup.tgz, skipping node_modules."
+
+[[example]]
+request = "who is listening on port 5432"
+command = "lsof -nP -iTCP:5432 -sTCP:LISTEN"
+explanation = "Shows the process listening on TCP port 5432."
+
+[[example]]
+request = "replace http with https in links.txt"
+command = "sed -i '' 's/http:/https:/g' links.txt"
+explanation = "Edits links.txt in place, changing http: to https:."
+
+[[example]]
+request = "show the 10 largest folders here"
+command = "du -sh * | sort -rh | head -n 10"
+explanation = "Lists the ten largest items in this folder by size."
+
+[[example]]
+request = "files changed in the last 2 days"
+command = "find . -type f -mtime -2"
+explanation = "Lists files under this folder modified in the last two days."
+
+[[example]]
+context = "Programs you can run: ~/tools/backup/bin/backup-now, ~/tools/backup/setup.sh\nProject folders: ~/tools/backup"
+request = "start my backup tool"
+command = "~/tools/backup/bin/backup-now"
+explanation = "Runs your backup-now program."
+
+# --- Files ---
+[[example]]
+request = "list files sorted by newest first"
+command = "ls -lt"
+explanation = "Lists files here, most recently modified first."
+
+[[example]]
+request = "show the 3 largest files under here, including subfolders"
+command = "find . -type f -exec du -h {} + | sort -rh | head -n 3"
+explanation = "Shows the three largest files below this folder."
+
+[[example]]
+request = "how much space does the photos folder take"
+command = "du -sh photos"
+explanation = "Shows the total size of the photos folder."
+
+[[example]]
+request = "find files bigger than 500 MB in my home folder"
+command = "find ~ -type f -size +500M"
+explanation = "Lists files over 500 MB under your home folder."
+
+[[example]]
+request = "find all png files in this folder and below"
+command = "find . -name '*.png'"
+explanation = "Lists every .png file below this folder."
+
+[[example]]
+request = "count the files in downloads"
+command = "find ~/Downloads -type f | wc -l"
+explanation = "Counts the files in Downloads."
+
+[[example]]
+request = "make deploy.sh executable"
+command = "chmod +x deploy.sh"
+explanation = "Lets deploy.sh be run as a program."
+
+[[example]]
+request = "copy report.pdf to my desktop"
+command = "cp report.pdf ~/Desktop/"
+explanation = "Copies report.pdf to the Desktop."
+
+[[example]]
+request = "move all the csv files into a data folder"
+command = "mkdir -p data && mv *.csv data/"
+explanation = "Creates data/ and moves every .csv file into it."
+
+[[example]]
+request = "rename every .txt file here to .md"
+command = "for f in *.txt; do mv \"$f\" \"${f%.txt}.md\"; done"
+explanation = "Changes the extension of each .txt file to .md."
+
+[[example]]
+request = "extract backup.tar.gz here"
+command = "tar -xzf backup.tar.gz"
+explanation = "Unpacks backup.tar.gz into this folder."
+
+[[example]]
+request = "zip the photos folder"
+command = "zip -r photos.zip photos"
+explanation = "Creates photos.zip from the photos folder."
+
+[[example]]
+request = "unzip site.zip into a folder called site"
+command = "unzip site.zip -d site"
+explanation = "Extracts site.zip into the site folder."
+
+[[example]]
+request = "delete all .DS_Store files under here"
+command = "find . -name .DS_Store -type f -delete"
+explanation = "Deletes every .DS_Store file below this folder."
+
+[[example]]
+request = "show the folder structure two levels deep"
+command = "find . -maxdepth 2 -type d"
+explanation = "Lists folders up to two levels below here."
+
+[[example]]
+request = "show all files including dotfiles with sizes"
+command = "ls -lah"
+explanation = "Lists all files, hidden ones too, with readable sizes."
+
+[[example]]
+request = "make a folder called build and go into it"
+command = "mkdir -p build && cd build"
+explanation = "Creates build/ and changes into it."
+
+# --- Text ---
+[[example]]
+request = "search for the word password in every file under config"
+command = "grep -rn \"password\" config"
+explanation = "Shows each line under config containing password."
+
+[[example]]
+request = "show lines 10 to 20 of main.py"
+command = "sed -n '10,20p' main.py"
+explanation = "Prints lines 10 through 20 of main.py."
+
+[[example]]
+request = "first 20 lines of data.csv"
+command = "head -n 20 data.csv"
+explanation = "Shows the first 20 lines of data.csv."
+
+[[example]]
+request = "last 100 lines of app.log"
+command = "tail -n 100 app.log"
+explanation = "Shows the last 100 lines of app.log."
+
+[[example]]
+request = "follow error.log live"
+command = "tail -f error.log"
+explanation = "Shows new lines of error.log as they're written."
+
+[[example]]
+request = "count lines in every python file here and below"
+command = "find . -name '*.py' | xargs wc -l"
+explanation = "Counts lines in each .py file, with a total."
+
+[[example]]
+request = "pretty print response.json"
+command = "jq . response.json"
+explanation = "Shows response.json formatted and coloured."
+
+[[example]]
+request = "remove duplicate lines from names.txt"
+command = "sort -u names.txt -o names.txt"
+explanation = "Sorts names.txt in place, keeping one of each line."
+
+# --- Processes ---
+[[example]]
+request = "what's using the most memory"
+command = "ps aux -m | head -n 10"
+explanation = "Lists the ten processes using the most memory."
+
+[[example]]
+request = "which processes use the most cpu"
+command = "ps aux -r | head -n 10"
+explanation = "Lists the ten processes using the most CPU."
+
+[[example]]
+request = "stop the process listening on port 5000"
+command = "lsof -ti tcp:5000 | xargs kill"
+explanation = "Stops whatever is listening on port 5000."
+
+# --- Network ---
+[[example]]
+request = "what's my local ip"
+command = "ipconfig getifaddr en0"
+explanation = "Shows this Mac's IP address on Wi-Fi."
+
+[[example]]
+request = "what's my public ip address"
+command = "curl -s https://ifconfig.me"
+explanation = "Shows the IP address the internet sees."
+
+[[example]]
+request = "check if github.com is reachable"
+command = "ping -c 3 github.com"
+explanation = "Sends three pings to github.com."
+
+[[example]]
+request = "show the http headers of example.com"
+command = "curl -sI https://example.com"
+explanation = "Shows the HTTP response headers from example.com."
+
+[[example]]
+request = "download https://example.com/tool.zip"
+command = "curl -LO https://example.com/tool.zip"
+explanation = "Downloads tool.zip into this folder."
+
+[[example]]
+request = "weather in paris"
+command = "curl wttr.in/Paris"
+explanation = "Shows the weather forecast for Paris."
+
+# --- Git ---
+[[example]]
+request = "uncommit the last two commits but keep the work"
+command = "git reset --soft HEAD~2"
+explanation = "Undoes two commits, keeping their changes staged."
+
+[[example]]
+request = "discard my changes to app.js"
+command = "git restore app.js"
+explanation = "Restores app.js to the last committed version."
+
+[[example]]
+request = "show what changed in the last commit"
+command = "git show --stat HEAD"
+explanation = "Shows the last commit and the files it changed."
+
+[[example]]
+request = "list branches, most recent first"
+command = "git branch --sort=-committerdate"
+explanation = "Lists local branches by latest commit."
+
+[[example]]
+request = "rename this branch to fix/login"
+command = "git branch -m fix/login"
+explanation = "Renames the current branch to fix/login."
+
+[[example]]
+request = "delete the local branch old-ui"
+command = "git branch -d old-ui"
+explanation = "Deletes the merged local branch old-ui."
+
+[[example]]
+request = "show a compact history graph"
+command = "git log --oneline --graph --decorate -20"
+explanation = "Shows the last 20 commits as a graph."
+
+[[example]]
+request = "stash my changes including new files"
+command = "git stash -u"
+explanation = "Stashes changes, including untracked files."
+
+[[example]]
+request = "commit everything with the message Fix typo"
+command = "git commit -am \"Fix typo\""
+explanation = "Commits all tracked changes as Fix typo."
+
+[[example]]
+request = "which files have I changed"
+command = "git status --short"
+explanation = "Lists changed files in short form."
+
+# --- macOS ---
+[[example]]
+request = "show my downloads folder in finder"
+command = "open ~/Downloads"
+explanation = "Opens Downloads in a Finder window."
+
+[[example]]
+request = "copy the contents of notes.txt to the clipboard"
+command = "pbcopy < notes.txt"
+explanation = "Puts the text of notes.txt on the clipboard."
+
+[[example]]
+request = "save the clipboard into clip.txt"
+command = "pbpaste > clip.txt"
+explanation = "Writes the clipboard text to clip.txt."
+
+[[example]]
+request = "keep the mac awake for an hour"
+command = "caffeinate -t 3600"
+explanation = "Prevents sleep for 3600 seconds."
+
+[[example]]
+request = "take a screenshot and save it as shot.png"
+command = "screencapture shot.png"
+explanation = "Saves a screenshot of the screen to shot.png."
+
+[[example]]
+request = "find files named invoice anywhere with spotlight"
+command = "mdfind -name invoice"
+explanation = "Searches the Spotlight index for files named invoice."
+
+[[example]]
+request = "battery status"
+command = "pmset -g batt"
+explanation = "Shows battery charge and power source."
+
+[[example]]
+request = "install ripgrep"
+command = "brew install ripgrep"
+explanation = "Installs ripgrep with Homebrew."
+
+[[example]]
+request = "update all my homebrew packages"
+command = "brew update && brew upgrade"
+explanation = "Refreshes Homebrew and upgrades installed packages."
+
+[[example]]
+context = "Apps: Calendar"
+request = "open calendar"
+command = "open -a Calendar"
+explanation = "Opens the Calendar app."
+
+[[example]]
+request = "what time is it in tokyo"
+command = "TZ=Asia/Tokyo date"
+explanation = "Shows the current time in Tokyo."
+
+[[example]]
+request = "find the ssh commands in my history"
+command = "history 1 | grep ssh"
+explanation = "Shows past commands containing ssh."
+
+# --- Development ---
+[[example]]
+request = "make a python virtual environment and activate it"
+command = "python3 -m venv .venv && source .venv/bin/activate"
+explanation = "Creates .venv and activates it in this shell."
+
+[[example]]
+request = "install the python requirements"
+command = "pip3 install -r requirements.txt"
+explanation = "Installs the packages listed in requirements.txt."
+
+[[example]]
+request = "show running docker containers"
+command = "docker ps"
+explanation = "Lists running Docker containers."
+
+[[example]]
+request = "start a throwaway debian container"
+command = "docker run --rm -it debian bash"
+explanation = "Starts Debian with a shell; deleted when you exit."
+
+# --- ctx ---
+[[example]]
+request = "open a new tab here called Logs"
+command = "ctx open tab at . named \"Logs\""
+explanation = "Opens a new tab in this folder named Logs."

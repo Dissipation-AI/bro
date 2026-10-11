@@ -1,0 +1,6 @@
+{
+ "request": "go to my home folder",
+ "accept": [
+  "^cd( ~/?| \\$HOME)?$"
+ ]
+}

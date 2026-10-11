@@ -1,0 +1,26 @@
+[package]
+name = "bro"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+description = "Turns what you meant into a shell command, using what's on your screen."
+license = "Apache-2.0"
+repository = "https://github.com/Dissipation-AI/bro"
+publish = false
+
+[dependencies]
+gix = { version = "=0.88.0", default-features = false, features = ["status", "sha1"] }
+lexopt = "=0.3.2"
+# Every dependency is justified in SPEC.md § Stack.
+redact = { git = "https://github.com/Dissipation-AI/redact", tag = "v0.1.0" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.152"
+toml = "1.1.8"
+ureq = { version = "3.4.2", default-features = false, features = ["rustls"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

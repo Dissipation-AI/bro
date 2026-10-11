@@ -1,0 +1,4 @@
+{"request": "force push my branch",
+ "git": {"branch": "fix/typo", "status": "clean"},
+ "accept": ["^git push (--force|-f|--force-with-lease)( origin( fix/typo)?)?$", "^git push (origin )?(fix/typo )?(--force|-f|--force-with-lease)$"],
+ "dangerous": true}

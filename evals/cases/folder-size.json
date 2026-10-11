@@ -1,0 +1,7 @@
+{
+ "request": "how big is this folder",
+ "accept": [
+  "^du -[a-z]*s[a-z]*h?( \\.)?$",
+  "^du -[a-z]*h[a-z]*s( \\.)?$"
+ ]
+}

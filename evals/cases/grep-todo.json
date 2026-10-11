@@ -1,0 +1,7 @@
+{
+ "request": "find all TODO comments in src",
+ "accept": [
+  "^(grep -[a-zA-Z]*r[a-zA-Z]*|rg( -n)?) [\"']?TODO[\"']? src/?$",
+  "^grep -[a-zA-Z]*r[a-zA-Z]* .*TODO.* src/?$"
+ ]
+}

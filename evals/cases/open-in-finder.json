@@ -1,0 +1,7 @@
+{
+ "request": "open this folder in finder",
+ "accept": [
+  "^open (\\.|~/code/site/?)$",
+  "^open -a \"?Finder\"? (\\.|~/code/site/?)$"
+ ]
+}

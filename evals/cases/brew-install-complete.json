@@ -1,0 +1,7 @@
+{
+ "request": "",
+ "line": "brew install the json command line tool",
+ "accept": [
+  "^brew install jq$"
+ ]
+}

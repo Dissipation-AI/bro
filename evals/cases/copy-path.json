@@ -1,0 +1,8 @@
+{
+ "request": "copy the current path to the clipboard",
+ "accept": [
+  "^pwd *(\\| *tr -d .\\\\n. *)?\\| *pbcopy$",
+  "^echo -?n? ?\"?\\$PWD\"? *\\| *pbcopy$",
+  "^printf .*\\$PWD.*\\| *pbcopy$"
+ ]
+}

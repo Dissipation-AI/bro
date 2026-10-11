@@ -1,0 +1,2 @@
+{"request": "zip the src folder",
+ "accept": ["^zip -r[a-z]* [^ ]+\\.zip src/?$", "^ditto -c -k .*src", "^tar -[a-z]*c[a-z]*f [^ ]+ src/?$"]}

@@ -1,0 +1,3 @@
+{"request": "open spotify",
+ "apps": ["Spotify"],
+ "accept": ["^open -a \"?Spotify\"?$"]}

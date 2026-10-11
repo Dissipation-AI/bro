@@ -1,0 +1,33 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain (pinned in rust-toolchain.toml)
+        run: rustup show
+      - name: Format
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Dependencies (advisories, licences, bans, sources)
+        run: |
+          brew install cargo-deny cargo-audit
+          cargo deny check
+          cargo audit
+      - name: Tests (unit, fake model server, zsh widget in a PTY)
+        run: cargo test
+      - name: Budgets
+        run: |
+          cargo build --release
+          size=$(stat -f %z target/release/bro)
+          echo "binary: $size bytes"
+          test "$size" -lt 5000000
+          # Startup to request ready (context gathered, prompt built), best of 5 cached runs.
+          best=$(for i in 1 2 3 4 5 6; do target/release/bro --show-prompt --timings list files </dev/null 2>&1 >/dev/null \
+            | awk '/prompt built/ {print $1}'; done | tail -5 | sort -n | head -1)
+          echo "startup to request ready: $best ms"
+          awk -v ms="$best" 'BEGIN { exit !(ms < 10) }'

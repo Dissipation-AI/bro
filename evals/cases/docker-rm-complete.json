@@ -1,0 +1,7 @@
+{
+ "request": "but remove the container when it exits",
+ "line": "docker run -it ubuntu",
+ "accept": [
+  "^docker run .*--rm.*ubuntu"
+ ]
+}

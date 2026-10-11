@@ -1,0 +1,7 @@
+{
+ "request": "go back to the previous folder",
+ "accept": [
+  "^cd -$",
+  "^popd$"
+ ]
+}

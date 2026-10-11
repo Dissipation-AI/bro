@@ -1,0 +1,6 @@
+{
+ "request": "show hidden files here",
+ "accept": [
+  "^ls -[a-zA-Z]*[aA][a-zA-Z]*( \\.| ~/code/site/?)?$"
+ ]
+}

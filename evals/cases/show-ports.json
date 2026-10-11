@@ -1,0 +1,8 @@
+{
+ "request": "list all ports that are listening",
+ "accept": [
+  "^lsof -[a-zA-Z]*i[a-zA-Z]* .*LISTEN",
+  "^netstat -an[a-z]* .*LISTEN",
+  "^lsof -nP -iTCP -sTCP:LISTEN$"
+ ]
+}

@@ -1,0 +1,7 @@
+{
+ "request": "open the readme in textedit",
+ "accept": [
+  "^open -a \"?TextEdit\"? README\\.md$",
+  "^open -e README\\.md$"
+ ]
+}

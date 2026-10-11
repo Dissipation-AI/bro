@@ -1,0 +1,9 @@
+{
+ "request": "show the size of each file in this folder",
+ "accept": [
+  "^ls -[a-zA-Z]*l[a-zA-Z]*h[a-zA-Z]*$",
+  "^ls -[a-zA-Z]*h[a-zA-Z]*l[a-zA-Z]*$",
+  "^du -[a-z]*h[a-z]* \\*$",
+  "^du -[a-z]*s[a-z]*h[a-z]* \\*$"
+ ]
+}

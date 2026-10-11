@@ -1,0 +1,2 @@
+{"request": "Bro, open a browser searching for videos about salsa dancing.",
+ "accept": ["^open .*https://[^ ]*search[^ ]*salsa"]}

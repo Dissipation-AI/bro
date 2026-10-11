@@ -1,0 +1,6 @@
+{
+ "request": "which version of node do I have",
+ "accept": [
+  "^node (-v|--version)$"
+ ]
+}

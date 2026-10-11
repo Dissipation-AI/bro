@@ -1,0 +1,2 @@
+{"request": "show my ip address",
+ "accept": ["^ipconfig getifaddr en[0-9]$", "^curl .*(ifconfig\\.me|ipinfo\\.io|icanhazip|ipify|checkip)", "^ifconfig"]}

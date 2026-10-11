@@ -1,0 +1,7 @@
+{
+ "request": "make a new folder called drafts and go into it",
+ "accept": [
+  "^mkdir (-p )?drafts *(&&|;) *cd drafts$",
+  "^mkcd drafts$"
+ ]
+}

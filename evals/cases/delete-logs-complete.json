@@ -1,0 +1,8 @@
+{
+ "request": "and delete them",
+ "line": "find . -name '*.log'",
+ "accept": [
+  "^find \\. -name ['\"]\\*\\.log['\"] .*(-delete|-exec rm)"
+ ],
+ "dangerous": true
+}

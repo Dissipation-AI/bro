@@ -1,0 +1,635 @@
+2026-10-10T23:16:56	bro	biggest-files	FAIL	3252	find ~/code/site -type f -exec stat -c '%s %f' {} + | sort -nr | head -5 && ls -la ~/code/site/README.md config.yml node_modules/ package-lock.json package.json public/ src/ vite.config.js
+2026-10-10T23:16:56	bro	bsd-sed	FAIL	1770	sed -i '' 's/foo/bar/g' config.yml && zsh
+2026-10-10T23:16:56	bro	changed-today	PASS	3517	find ~/code/site -name *.md -o -name *.yml -o -name package.json -o -name vite.config.js -type f -mtime -1 -print && grep -i "modified" -r . | head -10 && cat -n README.md && cat -n config.yml && cat -n package-lock.json && cat -n package.json && cat -n public && cat -n src && cat -n vite.config.js
+2026-10-10T23:16:56	bro	count-lines	FAIL	1925	cat ~/code/site/src/package.json | grep -c "\"\"\"
+2026-10-10T23:16:56	bro	cpu-hog	FAIL	1654	kill -9 4242 && kill -9 402
+2026-10-10T23:16:56	bro	delete-node-modules	FAIL	1677	find ~/code/site -type d -name
+2026-10-10T23:16:56	bro	dev-server-tab-voice	FAIL	1506	open ~/code/site/Dev server
+2026-10-10T23:16:56	bro	disk-space	FAIL	1835	df -h ~/ && df -h ~ && df -h ~/code/site
+2026-10-10T23:16:56	bro	ffmpeg-complete	FAIL	1945	ffmpeg -i talk.mov -c copy output.mp4 && kill -9 WindowServer
+2026-10-10T23:16:56	bro	find-ctx-tab	FAIL	1842	pgrep -f "claude" && pgrep -f "node"
+2026-10-10T23:16:56	bro	fix-python-module	PASS	1499	pip install requests && python3 app.py
+2026-10-10T23:16:56	bro	force-push	FAIL	1716	git push --force-with-lease origin fix/typo
+2026-10-10T23:16:56	bro	git-branch-question	PASS	1625	git rev-parse --abbrev-ref HEAD
+2026-10-10T23:16:56	bro	kill-ghostty	PASS	1492	kill -9 812
+2026-10-10T23:16:56	bro	learned-notes	FAIL	1947	code ~/code/site && kill -9 402 || open -a "Google Chrome" ~/Documents/notes
+2026-10-10T23:16:56	bro	my-ip	FAIL	1799	curl -s ifconfig.com | grep 'inet'
+2026-10-10T23:16:56	bro	open-spotify	PASS	1330	open -a "Spotify"
+2026-10-10T23:16:56	bro	port-3000	FAIL	2609	lsof -nP -iTCP:3000 -sTCP:LISTEN && kill -9 $(cat /proc/$(lsof -t -iTCP:3000) | grep -v '12345')
+2026-10-10T23:16:56	bro	project-in-cursor	PASS	1609	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:16:56	bro	rebase-keep-mine	FAIL	1957	git rebase -i HEAD~1 --keep-main && git rebase --keep-main --onto main
+2026-10-10T23:16:56	bro	salsa-voice	PASS	1640	open "https://search.brave.com/search?q=salsa+dancing+videos"
+2026-10-10T23:16:56	bro	sysadmin-agent	FAIL	1722	open -a "Google Chrome" ~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:16:56	bro	undo-commit	FAIL	1855	git reset --hard HEAD~1 && git stash pop
+2026-10-10T23:16:56	bro	why-cargo-failed	PASS	4592	cargo add serde && cargo build --target x86_64-apple-darwin --release && pkill -f cargo && kill -9 $(pgrep -f cargo) && kill -9 $(pgrep -f WindowServer) && kill -9 $(pgrep -f Google Chrome Helper) && kill -9 $(pgrep -f Google Chrome) && kill -9 $(pgrep -f Slack) && kill -9 $(pgrep -f node) && zsh && ghostty && clear && exit && echo "Compilation failed due to missing serde crate."
+2026-10-10T23:16:56	bro	zip-src	FAIL	2032	zip -r ~/code/site/src.zip ~/code/site/src && rm ~/code/site/src.zip
+2026-10-10T23:20:46	bro	biggest-files	FAIL	1694	ls -la | sort -nr | head -5
+2026-10-10T23:20:46	bro	bsd-sed	FAIL	1390	sed -i '' 's/foo/bar/g' src/config.yml
+2026-10-10T23:20:46	bro	changed-today	FAIL	975	ls -1 src/
+2026-10-10T23:20:46	bro	count-lines	PASS	1167	cat src/*.js | wc -l
+2026-10-10T23:20:46	bro	cpu-hog	PASS	1087	kill -9 4242
+2026-10-10T23:20:46	bro	delete-node-modules	PASS	1494	find . -name "node_modules" -type d -exec rm -rf {} \
+2026-10-10T23:20:46	bro	dev-server-tab-voice	FAIL	1077	ERROR: the model gave no command (it said: ctx show "Dev server" # Opens the tab with the dev server running.)
+2026-10-10T23:20:46	bro	disk-space	FAIL	1085	df -h ~/code/site
+2026-10-10T23:20:46	bro	ffmpeg-complete	FAIL	1257	ffmpeg -v 0 -c copy talk.mov.mp4
+2026-10-10T23:20:46	bro	find-ctx-tab	FAIL	1067	ERROR: the model gave no command (it said: ctx show "tab 43" # Brings the Notes tab to the front.)
+2026-10-10T23:20:46	bro	fix-python-module	PASS	1092	pip install requests
+2026-10-10T23:20:46	bro	force-push	PASS	1313	git push --force-with-lease origin fix/typo
+2026-10-10T23:20:46	bro	git-branch-question	PASS	843	git branch
+2026-10-10T23:20:46	bro	kill-ghostty	PASS	1155	kill -9 812
+2026-10-10T23:20:46	bro	learned-notes	FAIL	890	ERROR: the model gave no command (it said: code ~/Documents/notes # opens the notes file in editor)
+2026-10-10T23:20:46	bro	my-ip	FAIL	1002	ERROR: the model gave no command (it said: ip addr show # Displays the current network interface and IP address.)
+2026-10-10T23:20:46	bro	open-spotify	PASS	1053	open -a "Spotify"
+2026-10-10T23:20:46	bro	port-3000	PASS	1247	lsof -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:20:46	bro	project-in-cursor	PASS	1245	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:20:46	bro	rebase-keep-mine	FAIL	1360	git rebase -i HEAD~2 --onto main
+2026-10-10T23:20:46	bro	salsa-voice	PASS	1247	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:20:46	bro	sysadmin-agent	FAIL	1280	open -a "Visual Studio Code" ~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:20:46	bro	undo-commit	PASS	1048	git reset --soft HEAD~1
+2026-10-10T23:20:46	bro	why-cargo-failed	FAIL	1668	sed -i '' 's/use serde::Deserialize;/use serde;/' src/main.rs
+2026-10-10T23:20:46	bro	zip-src	PASS	1207	zip -r src.zip src/
+2026-10-10T23:22:47	bro	biggest-files	PASS	1834	find . -type f -exec ls -l {} \; | sort -nr | head -5
+2026-10-10T23:22:47	bro	bsd-sed	PASS	1169	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:22:47	bro	changed-today	FAIL	1887	git log -1 --pretty=oneline --diff-filter=A --name-only | grep -v "node_modules/|package-lock.json" | grep -i "changed"
+2026-10-10T23:22:47	bro	count-lines	PASS	1105	cat src/ | wc -l
+2026-10-10T23:22:47	bro	cpu-hog	PASS	1065	kill -9 4242
+2026-10-10T23:22:47	bro	delete-node-modules	PASS	1703	find . -name "node_modules" -type d -exec rm -rf {} \;
+2026-10-10T23:22:47	bro	dev-server-tab-voice	PASS	1117	ctx show "Dev server"
+2026-10-10T23:22:47	bro	disk-space	FAIL	984	df -h ~
+2026-10-10T23:22:47	bro	ffmpeg-complete	FAIL	1199	ffmpeg -v 0 -c copy talk.mov.mp4
+2026-10-10T23:22:47	bro	find-ctx-tab	PASS	1027	ctx show "CTX spec writing"
+2026-10-10T23:22:47	bro	fix-python-module	PASS	1216	pip install requests
+2026-10-10T23:22:47	bro	force-push	PASS	1200	git push --force-with-lease origin fix/typo
+2026-10-10T23:22:47	bro	git-branch-question	PASS	1127	git rev-parse --abbrev-ref HEAD
+2026-10-10T23:22:47	bro	kill-ghostty	PASS	1137	kill -9 812
+2026-10-10T23:22:47	bro	learned-notes	FAIL	1130	open -a "Notes" ~/Documents/notes
+2026-10-10T23:22:47	bro	my-ip	FAIL	1460	ERROR: the model gave no command (it said: # I am a foundation model created by Apple, built into Apple Intelligence. ip addr show # Displays the network interface's IP address.)
+2026-10-10T23:22:47	bro	open-spotify	PASS	977	open -a "Spotify"
+2026-10-10T23:22:47	bro	port-3000	PASS	1361	lsof -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:22:47	bro	project-in-cursor	PASS	1260	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:22:47	bro	rebase-keep-mine	FAIL	1743	git rebase -i HEAD~2 --onto main --keep README.md config.yml src/
+2026-10-10T23:22:47	bro	salsa-voice	PASS	1244	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:22:47	bro	sysadmin-agent	FAIL	1316	open -a "~/Agents/sys-admin/sysadmin-agent"
+2026-10-10T23:22:47	bro	undo-commit	FAIL	1165	git reset --soft config.yml
+2026-10-10T23:22:47	bro	why-cargo-failed	FAIL	1677	sed -i '' 's/serde/serde_derive/g' src/main.rs
+2026-10-10T23:22:47	bro	zip-src	PASS	1146	zip -r src.zip src/
+2026-10-10T23:24:01	bro	biggest-files	FAIL	1914	find . -type f -exec ls -l {} \; | sort -nr | head -5
+2026-10-10T23:24:01	bro	bsd-sed	PASS	1166	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:24:01	bro	changed-today	FAIL	1906	git log -1 --pretty=oneline --diff-filter=A --name-only | grep -v "node_modules/|package-lock.json" | grep -i "changed"
+2026-10-10T23:24:01	bro	count-lines	FAIL	1079	cat src/ | wc -l
+2026-10-10T23:24:01	bro	cpu-hog	PASS	1017	kill -9 4242
+2026-10-10T23:24:01	bro	delete-node-modules	FAIL	1110	rm -rf node_modules/*
+2026-10-10T23:24:01	bro	dev-server-tab-voice	PASS	1053	ctx show "Dev server"
+2026-10-10T23:24:01	bro	disk-space	PASS	951	df -h ~
+2026-10-10T23:24:01	bro	ffmpeg-complete	PASS	1299	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-10T23:24:01	bro	find-ctx-tab	PASS	1067	ctx show "CTX spec writing"
+2026-10-10T23:24:01	bro	fix-python-module	PASS	1152	pip install requests
+2026-10-10T23:24:01	bro	force-push	PASS	1216	git push --force-with-lease origin fix/typo
+2026-10-10T23:24:01	bro	git-branch-question	PASS	1332	git rev-parse --abbrev-ref HEAD
+2026-10-10T23:24:01	bro	kill-ghostty	PASS	1219	kill -9 812
+2026-10-10T23:24:01	bro	learned-notes	PASS	1037	code ~/Documents/notes
+2026-10-10T23:24:01	bro	my-ip	FAIL	1361	ERROR: the model gave no command (it said: # I am a foundation model created by Apple, built into Apple Intelligence. ip addr show # Displays the network interface's IP address.)
+2026-10-10T23:24:01	bro	open-spotify	PASS	1005	open -a "Spotify"
+2026-10-10T23:24:01	bro	port-3000	PASS	1280	lsof -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:24:01	bro	project-in-cursor	PASS	1133	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:24:01	bro	rebase-keep-mine	FAIL	1658	git rebase -i HEAD~2 --onto main --keep README.md config.yml src/
+2026-10-10T23:24:01	bro	salsa-voice	PASS	1203	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:24:01	bro	sysadmin-agent	FAIL	1042	~/Agents/sys-admin
+2026-10-10T23:24:01	bro	undo-commit	FAIL	1166	git reset --soft config.yml
+2026-10-10T23:24:01	bro	why-cargo-failed	FAIL	1773	sed -i '' 's/use serde::Deserialize;/use serde;/' src/main.rs
+2026-10-10T23:24:01	bro	zip-src	PASS	1055	zip -r src.zip src/
+2026-10-10T23:30:17	bro	biggest-files	FAIL	1669	find . -type f -exec cat {} \; | sort -nr | head -5
+2026-10-10T23:30:17	bro	bsd-sed	PASS	1040	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:30:17	bro	changed-today	FAIL	1919	git log -1 --pretty=oneline --diff-filter=A --name-only | grep -v "node_modules/|package-lock.json" | grep -i "changed"
+2026-10-10T23:30:17	bro	count-lines	FAIL	1087	cat src/ | wc -l
+2026-10-10T23:30:17	bro	cpu-hog	PASS	981	kill -9 4242
+2026-10-10T23:30:17	bro	delete-node-modules	FAIL	1071	rm -rf node_modules/*
+2026-10-10T23:30:17	bro	dev-server-tab-voice	PASS	902	ctx show "Dev server"
+2026-10-10T23:30:17	bro	disk-space	PASS	790	df -i /
+2026-10-10T23:30:17	bro	ffmpeg-complete	PASS	1007	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-10T23:30:17	bro	find-ctx-tab	PASS	942	ctx show "CTX spec writing"
+2026-10-10T23:30:17	bro	fix-python-module	PASS	958	pip install requests
+2026-10-10T23:30:17	bro	force-push	PASS	1219	git push --force-with-lease origin fix/typo
+2026-10-10T23:30:17	bro	git-branch-question	PASS	748	git branch
+2026-10-10T23:30:17	bro	kill-ghostty	PASS	1032	kill -9 812
+2026-10-10T23:30:17	bro	learned-notes	PASS	896	code ~/Documents/notes
+2026-10-10T23:30:17	bro	my-ip	FAIL	1469	ERROR: the model gave no command (it said: # I am a foundation model created by Apple. I cannot show your IP. # ip -o 1 show # (This command is not available on macOS.))
+2026-10-10T23:30:17	bro	open-spotify	PASS	960	open -a "Spotify"
+2026-10-10T23:30:17	bro	port-3000	PASS	1051	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:30:17	bro	project-in-cursor	PASS	1063	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:30:17	bro	rebase-keep-mine	FAIL	1308	git rebase -i HEAD~2 --keep src/
+2026-10-10T23:30:17	bro	salsa-voice	PASS	1130	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:30:17	bro	sysadmin-agent	FAIL	977	~/Agents/sys-admin
+2026-10-10T23:30:17	bro	undo-commit	FAIL	961	git reset --soft config.yml
+2026-10-10T23:30:17	bro	why-cargo-failed	PASS	1140	cargo add serde && cargo build
+2026-10-10T23:30:17	bro	zip-src	PASS	881	zip -r src.zip src/
+2026-10-10T23:31:15	bro	biggest-files	FAIL	2134	ls -la | grep -E '\.json|\.yml' | sort -nr | head -5
+2026-10-10T23:31:15	bro	bsd-sed	PASS	1049	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:31:15	bro	changed-today	FAIL	1290	git log -1 --pretty=oneline --show=files ~/code/site
+2026-10-10T23:31:15	bro	count-lines	FAIL	1392	cat ~/code/src/package.json | grep -c "src" | grep -c "line" | wc -l
+2026-10-10T23:31:15	bro	cpu-hog	PASS	1008	kill -9 4242
+2026-10-10T23:31:15	bro	delete-node-modules	FAIL	1088	rm -rf node_modules/*
+2026-10-10T23:31:15	bro	dev-server-tab-voice	PASS	906	ctx show "Dev server"
+2026-10-10T23:31:15	bro	disk-space	FAIL	727	df -h .
+2026-10-10T23:31:15	bro	ffmpeg-complete	PASS	911	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-10T23:31:15	bro	find-ctx-tab	PASS	930	ctx show "CTX spec writing"
+2026-10-10T23:31:15	bro	fix-python-module	PASS	954	pip install requests
+2026-10-10T23:31:15	bro	force-push	PASS	968	git push --force-with-lease origin fix/typo
+2026-10-10T23:31:15	bro	git-branch-question	PASS	720	git branch
+2026-10-10T23:31:15	bro	kill-ghostty	PASS	978	kill -9 812
+2026-10-10T23:31:15	bro	learned-notes	PASS	875	code ~/Documents/notes
+2026-10-10T23:31:15	bro	my-ip	FAIL	1589	ERROR: the model gave no command (it said: # I am a foundation model created by Apple. I cannot show your IP address. cat /etc/resolv.conf | grep 'inet ' # Displays the local IP address from the network configuration.)
+2026-10-10T23:31:15	bro	open-spotify	PASS	929	open -a "Spotify"
+2026-10-10T23:31:15	bro	port-3000	PASS	1036	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:31:15	bro	project-in-cursor	PASS	1103	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:31:15	bro	rebase-keep-mine	FAIL	1545	git rebase -i HEAD~2 --onto main --keep README.md config.yml src/
+2026-10-10T23:31:15	bro	salsa-voice	PASS	1106	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:31:15	bro	sysadmin-agent	FAIL	986	open -a "~/Agents/sys-admin"
+2026-10-10T23:31:15	bro	undo-commit	PASS	974	git reset --soft HEAD~1
+2026-10-10T23:31:15	bro	why-cargo-failed	PASS	1151	cargo add serde && cargo build
+2026-10-10T23:31:15	bro	zip-src	PASS	1099	zip -r src.zip src
+2026-10-10T23:32:17	bro	biggest-files	FAIL	1725	find . -type f -exec ls -l {} \; | sort -nr | head -5
+2026-10-10T23:32:17	bro	bsd-sed	PASS	1036	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:32:17	bro	changed-today	FAIL	1312	git log -1 --pretty=oneline --show=files ~/code/site
+2026-10-10T23:32:17	bro	count-lines	FAIL	1328	sed -i '' 's/\/\//g' ~/code/site/src/package.json | wc -l
+2026-10-10T23:32:17	bro	cpu-hog	PASS	992	kill -9 4242
+2026-10-10T23:32:17	bro	delete-node-modules	PASS	1601	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-10T23:32:17	bro	dev-server-tab-voice	PASS	937	ctx show "Dev server"
+2026-10-10T23:32:17	bro	disk-space	PASS	739	df -h .
+2026-10-10T23:32:17	bro	ffmpeg-complete	PASS	1041	ffmpeg -i talk.mov -c copy output/talk.mp4
+2026-10-10T23:32:17	bro	find-ctx-tab	PASS	921	ctx show "CTX spec writing"
+2026-10-10T23:32:17	bro	fix-python-module	PASS	931	pip install requests
+2026-10-10T23:32:17	bro	force-push	PASS	960	git push --force-with-lease origin fix/typo
+2026-10-10T23:32:17	bro	git-branch-question	PASS	732	git branch
+2026-10-10T23:32:17	bro	kill-ghostty	PASS	959	kill -9 812
+2026-10-10T23:32:17	bro	learned-notes	PASS	856	code ~/Documents/notes
+2026-10-10T23:32:17	bro	my-ip	FAIL	1595	ERROR: the model gave no command (it said: # I am a foundation model created by Apple. I cannot show your IP address. cat /etc/resolv.conf | grep 'inet ' # Displays the local IP address from the network configuration.)
+2026-10-10T23:32:17	bro	open-spotify	PASS	886	open -a "Spotify"
+2026-10-10T23:32:17	bro	port-3000	PASS	1173	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:32:17	bro	project-in-cursor	PASS	1060	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:32:17	bro	rebase-keep-mine	FAIL	1559	git rebase -i HEAD~2 --onto main --keep README.md config.yml src/
+2026-10-10T23:32:17	bro	salsa-voice	PASS	1174	open -a "Safari" "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:32:17	bro	sysadmin-agent	PASS	996	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:32:17	bro	undo-commit	PASS	988	git reset --soft HEAD~1
+2026-10-10T23:32:17	bro	why-cargo-failed	PASS	1134	cargo add serde && cargo build
+2026-10-10T23:32:17	bro	zip-src	PASS	961	zip -r src.zip src/
+2026-10-10T23:33:29	bro	mkdir-and-enter	PASS	1364	mkdir -p drafts && cd drafts
+2026-10-10T23:33:29	bro	hidden-files	PASS	921	ls -A .
+2026-10-10T23:33:29	bro	folder-size	FAIL	1013	du -sh ./* | sort -hr | head -1
+2026-10-10T23:33:29	bro	open-in-finder	FAIL	856	open ~/code/site
+2026-10-10T23:33:29	bro	copy-path	FAIL	848	xclip -selection clipboard ~/code/site
+2026-10-10T23:33:29	bro	tail-log	FAIL	1340	tail -n +1 -c 50 server.log
+2026-10-10T23:33:29	bro	follow-log	FAIL	1100	tail -f ~/code/site/server.log
+2026-10-10T23:33:29	bro	grep-todo	FAIL	944	grep -i 'TODO' src/
+2026-10-10T23:33:29	bro	unzip-into	FAIL	968	unzip -d out archive.zip
+2026-10-10T23:33:29	bro	kill-node	PASS	1185	kill -9 5120
+2026-10-10T23:33:29	bro	docker-rm-complete	PASS	1251	docker run -it --rm ubuntu sh
+2026-10-10T23:33:29	bro	fix-vite-missing	FAIL	1219	npm install --prefix ~/code/site
+2026-10-10T23:33:29	bro	weather-voice	FAIL	1477	curl -s "http://weather.example.com/current" | sed -i '' 's/.*//g' > weather.txt
+2026-10-10T23:33:29	bro	claude-tab	PASS	972	ctx show "Claude - auth refactor"
+2026-10-10T23:33:29	bro	rename-jpeg	PASS	1003	rename -i *.jpeg .jpg
+2026-10-10T23:33:29	bro	stop-port-8080	FAIL	2073	lsof -nP -iTCP:8080 -sTCP:LISTEN | grep -v 'node' | awk '{print $1}' | xargs kill -9
+2026-10-10T23:33:29	bro	wipe-changes	FAIL	993	git reset --hard HEAD~2
+2026-10-10T23:33:29	bro	brew-install-complete	FAIL	976	brew install json
+2026-10-10T23:36:14	bro	biggest-files	PASS	1786	ls -la +grep '\.json' -A | sort -k5 -nr | head -5
+2026-10-10T23:36:14	bro	brew-install-complete	FAIL	903	brew install json
+2026-10-10T23:36:14	bro	bsd-sed	PASS	1025	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:36:14	bro	changed-today	PASS	1519	find . -type f -newerm ~/code/site/README.md 2>/dev/null -exec basename {} \; | grep -i "changed"
+2026-10-10T23:36:14	bro	claude-tab	PASS	1022	ctx show "Claude - auth refactor"
+2026-10-10T23:36:14	bro	copy-path	FAIL	894	pbcopy .
+2026-10-10T23:36:14	bro	count-lines	FAIL	1491	sed -i '' 's/\/\//g' src/package.json src/vite.config.js | wc -l
+2026-10-10T23:36:14	bro	cpu-hog	PASS	1202	kill -9 4242
+2026-10-10T23:36:14	bro	delete-node-modules	PASS	1440	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-10T23:36:14	bro	dev-server-tab-voice	PASS	946	ctx show "Dev server"
+2026-10-10T23:36:14	bro	disk-space	PASS	821	df -h ~
+2026-10-10T23:36:14	bro	docker-rm-complete	PASS	1107	docker run --rm -it ubuntu sh
+2026-10-10T23:36:14	bro	ffmpeg-complete	PASS	1037	ffmpeg -i talk.mov -c copy output/talk.mp4
+2026-10-10T23:36:14	bro	find-ctx-tab	PASS	939	ctx show "CTX spec writing"
+2026-10-10T23:36:14	bro	fix-python-module	PASS	1013	pip install requests
+2026-10-10T23:36:14	bro	fix-vite-missing	PASS	1348	npm install --prefix ~/code/site
+2026-10-10T23:36:14	bro	folder-size	PASS	904	du -sh .
+2026-10-10T23:36:14	bro	follow-log	PASS	1217	tail -f ~/code/site/server.log
+2026-10-10T23:36:14	bro	force-push	PASS	1293	git push --force-with-lease origin fix/typo
+2026-10-10T23:36:14	bro	git-branch-question	PASS	732	git branch
+2026-10-10T23:36:14	bro	grep-todo	FAIL	1193	find ~/code/site/src -type f -exec grep -l 'TODO' {} +
+2026-10-10T23:36:14	bro	hidden-files	FAIL	949	ls -A ~/code/site
+2026-10-10T23:36:14	bro	kill-ghostty	PASS	1071	kill -9 812
+2026-10-10T23:36:14	bro	kill-node	PASS	1206	kill -9 5120
+2026-10-10T23:36:14	bro	learned-notes	PASS	918	code ~/Documents/notes
+2026-10-10T23:36:14	bro	mkdir-and-enter	PASS	865	mkdir -p drafts && cd drafts
+2026-10-10T23:36:14	bro	my-ip	PASS	941	curl -s https://ifconfig.me
+2026-10-10T23:36:14	bro	open-in-finder	PASS	951	open ~/code/site
+2026-10-10T23:36:14	bro	open-spotify	PASS	944	open -a "Spotify"
+2026-10-10T23:36:14	bro	port-3000	PASS	1171	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:36:14	bro	project-in-cursor	PASS	1085	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:36:14	bro	rebase-keep-mine	FAIL	1124	git rebase -i HEAD~2 --keep .
+2026-10-10T23:36:14	bro	rename-jpeg	FAIL	1167	find . -name "*.jpeg" -exec mv {} .jpg \;
+2026-10-10T23:36:14	bro	salsa-voice	PASS	1065	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:36:14	bro	stop-port-8080	PASS	1134	lsof -ti :8080 | xargs kill
+2026-10-10T23:36:14	bro	sysadmin-agent	PASS	995	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:36:14	bro	tail-log	FAIL	1120	sed -i '' '10,$50p' server.log
+2026-10-10T23:36:14	bro	undo-commit	FAIL	983	git reset --soft HEAD@{1}
+2026-10-10T23:36:14	bro	unzip-into	FAIL	938	unzip archive.zip -d ../out
+2026-10-10T23:36:14	bro	weather-voice	PASS	851	curl wttr.in/Paris
+2026-10-10T23:36:14	bro	why-cargo-failed	PASS	1222	cargo add serde && cargo build
+2026-10-10T23:36:14	bro	wipe-changes	PASS	966	git reset --hard HEAD
+2026-10-10T23:36:14	bro	zip-src	PASS	942	zip -r src.zip src
+2026-10-10T23:37:24	bro	biggest-files	PASS	1993	ls -la +grep '\.json' -A | sort -k5 -nr | head -5
+2026-10-10T23:37:24	bro	brew-install-complete	FAIL	906	brew install json
+2026-10-10T23:37:24	bro	bsd-sed	PASS	1058	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:37:24	bro	changed-today	PASS	1544	find . -type f -newerm ~/code/site/README.md 2>/dev/null -exec basename {} \; | grep -i "changed"
+2026-10-10T23:37:24	bro	claude-tab	PASS	1011	ctx show "Claude - auth refactor"
+2026-10-10T23:37:24	bro	copy-path	FAIL	805	pbcopy .
+2026-10-10T23:37:24	bro	count-lines	FAIL	1467	sed -i '' 's/\/\//g' src/package.json src/vite.config.js | wc -l
+2026-10-10T23:37:24	bro	cpu-hog	PASS	1112	kill -9 4242
+2026-10-10T23:37:24	bro	delete-node-modules	PASS	1452	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-10T23:37:24	bro	dev-server-tab-voice	PASS	942	ctx show "Dev server"
+2026-10-10T23:37:24	bro	disk-space	PASS	803	df -h ~
+2026-10-10T23:37:24	bro	docker-rm-complete	PASS	1120	docker run --rm -it ubuntu sh
+2026-10-10T23:37:24	bro	ffmpeg-complete	PASS	1036	ffmpeg -i talk.mov -c copy output/talk.mp4
+2026-10-10T23:37:24	bro	find-ctx-tab	PASS	916	ctx show "CTX spec writing"
+2026-10-10T23:37:24	bro	fix-python-module	PASS	1026	pip install requests
+2026-10-10T23:37:24	bro	fix-vite-missing	PASS	1232	npm install --prefix ~/code/site
+2026-10-10T23:37:24	bro	folder-size	PASS	813	du -sh .
+2026-10-10T23:37:24	bro	follow-log	PASS	1078	tail -f ~/code/site/server.log
+2026-10-10T23:37:24	bro	force-push	PASS	1290	git push --force-with-lease origin fix/typo
+2026-10-10T23:37:24	bro	git-branch-question	PASS	750	git branch
+2026-10-10T23:37:24	bro	grep-todo	FAIL	1191	find ~/code/site/src -type f -exec grep -l 'TODO' {} +
+2026-10-10T23:37:24	bro	hidden-files	PASS	944	ls -A ~/code/site
+2026-10-10T23:37:24	bro	kill-ghostty	PASS	1060	kill -9 812
+2026-10-10T23:37:24	bro	kill-node	PASS	1152	kill -9 5120
+2026-10-10T23:37:24	bro	learned-notes	PASS	862	code ~/Documents/notes
+2026-10-10T23:37:24	bro	mkdir-and-enter	PASS	859	mkdir -p drafts && cd drafts
+2026-10-10T23:37:24	bro	my-ip	PASS	958	curl -s https://ifconfig.me
+2026-10-10T23:37:24	bro	open-in-finder	PASS	897	open ~/code/site
+2026-10-10T23:37:24	bro	open-spotify	PASS	933	open -a "Spotify"
+2026-10-10T23:37:24	bro	port-3000	PASS	1166	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:37:24	bro	project-in-cursor	PASS	1096	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:37:24	bro	rebase-keep-mine	FAIL	1506	git rebase -i HEAD~2 --onto main --keep public/ src/
+2026-10-10T23:37:24	bro	rename-jpeg	FAIL	1171	find . -name "*.jpeg" -exec mv {} .jpg \;
+2026-10-10T23:37:24	bro	salsa-voice	PASS	1049	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:37:24	bro	stop-port-8080	PASS	1119	lsof -ti :8080 | xargs kill
+2026-10-10T23:37:24	bro	sysadmin-agent	PASS	998	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:37:24	bro	tail-log	PASS	1006	tail -n 50 server.log
+2026-10-10T23:37:24	bro	undo-commit	FAIL	1006	git reset --soft HEAD@{1}
+2026-10-10T23:37:24	bro	unzip-into	FAIL	946	unzip archive.zip -d ../out
+2026-10-10T23:37:24	bro	weather-voice	PASS	855	curl wttr.in/Paris
+2026-10-10T23:37:24	bro	why-cargo-failed	PASS	1214	cargo add serde && cargo build
+2026-10-10T23:37:24	bro	wipe-changes	PASS	967	git reset --hard HEAD
+2026-10-10T23:37:24	bro	zip-src	PASS	1039	zip -r src.zip src
+2026-10-10T23:38:42	bro	uptime whoami brew-list readme-textedit env-vars copy-folder png-to-jpg file-sizes cd-back cd-home node-version git-remote new-branch folder-sizes-sorted kill-safari home-space fix-git-identity delete-logs-complete youtube-voice show-ports	FAIL	15	ERROR: /var/folders/rb/x1hdwk9138lbks3c2gr1f9gr0000gn/T/tmp.aBNJ0vNKYI/context.json: EOF while parsing a value at line 1 column 0
+2026-10-10T23:38:48	bro	uptime	PASS	1427	uptime
+2026-10-10T23:38:48	bro	whoami	PASS	964	whoami
+2026-10-10T23:38:48	bro	brew-list	PASS	806	brew list
+2026-10-10T23:38:48	bro	readme-textedit	FAIL	1011	open -a TextEdit ~/code/README.md
+2026-10-10T23:38:48	bro	env-vars	FAIL	959	env | grep -i env
+2026-10-10T23:38:48	bro	copy-folder	FAIL	948	cp src src-backup
+2026-10-10T23:38:48	bro	png-to-jpg	FAIL	967	convert logo.png -out logo.jpg
+2026-10-10T23:38:48	bro	file-sizes	PASS	867	ls -lh
+2026-10-10T23:38:48	bro	cd-back	FAIL	802	cd ..
+2026-10-10T23:38:48	bro	cd-home	PASS	783	cd ~
+2026-10-10T23:38:48	bro	node-version	PASS	946	node -v
+2026-10-10T23:38:48	bro	git-remote	FAIL	1079	git config --get remote.origin url
+2026-10-10T23:38:48	bro	new-branch	PASS	1029	git checkout -b feature/search
+2026-10-10T23:38:48	bro	folder-sizes-sorted	FAIL	1106	du -sh ~/code/site/* | sort -hr | head -5
+2026-10-10T23:38:48	bro	kill-safari	PASS	1077	kill -9 3001
+2026-10-10T23:38:48	bro	home-space	FAIL	894	du -sh ~/*
+2026-10-10T23:38:48	bro	fix-git-identity	PASS	1525	git config --global user.email "you@example.com"
+2026-10-10T23:38:48	bro	delete-logs-complete	PASS	1032	find . -name '*.log' -delete
+2026-10-10T23:38:48	bro	youtube-voice	FAIL	858	open -a "YouTube"
+2026-10-10T23:38:48	bro	show-ports	FAIL	1094	lsof -t -d 1 -sTCP:LISTEN
+2026-10-10T23:48:06	bro	biggest-files	PASS	1937	ls -la +grep '\.json' -A | sort -k5 -nr | head -5
+2026-10-10T23:48:06	bro	brew-install-complete	FAIL	885	brew install json
+2026-10-10T23:48:06	bro	brew-list	PASS	731	brew list
+2026-10-10T23:48:06	bro	bsd-sed	PASS	1036	sed -i '' 's/foo/bar/g' config.yml
+2026-10-10T23:48:06	bro	cd-back	FAIL	767	cd ..
+2026-10-10T23:48:06	bro	cd-home	PASS	775	cd ~
+2026-10-10T23:48:06	bro	changed-today	PASS	1544	find . -type f -newerm ~/code/site/README.md 2>/dev/null -exec basename {} \; | grep -i "changed"
+2026-10-10T23:48:06	bro	claude-tab	PASS	1004	ctx show "Claude - auth refactor"
+2026-10-10T23:48:06	bro	copy-folder	FAIL	918	cp src src-backup
+2026-10-10T23:48:06	bro	copy-path	FAIL	806	pbcopy .
+2026-10-10T23:48:06	bro	count-lines	FAIL	1469	sed -i '' 's/\/\//g' src/package.json src/vite.config.js | wc -l
+2026-10-10T23:48:06	bro	cpu-hog	PASS	1106	kill -9 4242
+2026-10-10T23:48:06	bro	delete-logs-complete	PASS	1011	find . -name '*.log' -delete
+2026-10-10T23:48:06	bro	delete-node-modules	PASS	1452	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-10T23:48:06	bro	dev-server-tab-voice	PASS	929	ctx show "Dev server"
+2026-10-10T23:48:06	bro	disk-space	PASS	809	df -h ~
+2026-10-10T23:48:06	bro	docker-rm-complete	PASS	1131	docker run --rm -it ubuntu sh
+2026-10-10T23:48:06	bro	env-vars	FAIL	965	env | grep -i env
+2026-10-10T23:48:06	bro	ffmpeg-complete	PASS	1051	ffmpeg -i talk.mov -c copy output/talk.mp4
+2026-10-10T23:48:06	bro	file-sizes	PASS	863	ls -lh
+2026-10-10T23:48:06	bro	find-ctx-tab	PASS	918	ctx show "CTX spec writing"
+2026-10-10T23:48:06	bro	fix-git-identity	PASS	1531	git config --global user.email "you@example.com"
+2026-10-10T23:48:06	bro	fix-python-module	PASS	975	pip install requests
+2026-10-10T23:48:06	bro	fix-vite-missing	PASS	1190	npm install --prefix ~/code/site
+2026-10-10T23:48:06	bro	folder-size	PASS	783	du -sh .
+2026-10-10T23:48:06	bro	folder-sizes-sorted	FAIL	1100	du -sh ~/code/site/* | sort -hr | head -5
+2026-10-10T23:48:06	bro	follow-log	PASS	1081	tail -f ~/code/site/server.log
+2026-10-10T23:48:06	bro	force-push	PASS	1292	git push --force-with-lease origin fix/typo
+2026-10-10T23:48:06	bro	git-branch-question	PASS	724	git branch
+2026-10-10T23:48:06	bro	git-remote	FAIL	1085	git config --get remote.origin url
+2026-10-10T23:48:06	bro	grep-todo	FAIL	1192	find ~/code/site/src -type f -exec grep -l 'TODO' {} +
+2026-10-10T23:48:06	bro	hidden-files	PASS	935	ls -A ~/code/site
+2026-10-10T23:48:06	bro	home-space	FAIL	872	du -sh ~/*
+2026-10-10T23:48:06	bro	kill-ghostty	PASS	1062	kill -9 812
+2026-10-10T23:48:06	bro	kill-node	PASS	1155	kill -9 5120
+2026-10-10T23:48:06	bro	kill-safari	PASS	1055	kill -9 3001
+2026-10-10T23:48:06	bro	learned-notes	PASS	856	code ~/Documents/notes
+2026-10-10T23:48:06	bro	mkdir-and-enter	PASS	855	mkdir -p drafts && cd drafts
+2026-10-10T23:48:06	bro	my-ip	PASS	944	curl -s https://ifconfig.me
+2026-10-10T23:48:06	bro	new-branch	PASS	1007	git checkout -b feature/search
+2026-10-10T23:48:06	bro	node-version	PASS	922	node -v
+2026-10-10T23:48:06	bro	open-in-finder	PASS	895	open ~/code/site
+2026-10-10T23:48:06	bro	open-spotify	PASS	935	open -a "Spotify"
+2026-10-10T23:48:06	bro	png-to-jpg	FAIL	973	convert logo.png -out logo.jpg
+2026-10-10T23:48:06	bro	port-3000	PASS	1260	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-10T23:48:06	bro	project-in-cursor	PASS	1159	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-10T23:48:06	bro	readme-textedit	FAIL	989	open -a TextEdit ~/code/README.md
+2026-10-10T23:48:06	bro	rebase-keep-mine	FAIL	1497	git rebase -i HEAD~2 --onto main --keep public/ src/
+2026-10-10T23:48:06	bro	rename-jpeg	FAIL	1182	find . -name "*.jpeg" -exec mv {} .jpg \;
+2026-10-10T23:48:06	bro	salsa-voice	PASS	1101	open "https://search.brave.com/search?q=salsa+dancing"
+2026-10-10T23:48:06	bro	show-ports	FAIL	1099	lsof -t -d 1 -sTCP:LISTEN
+2026-10-10T23:48:06	bro	stop-port-8080	PASS	1127	lsof -ti :8080 | xargs kill
+2026-10-10T23:48:06	bro	sysadmin-agent	PASS	995	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-10T23:48:06	bro	tail-log	PASS	1001	tail -n 50 server.log
+2026-10-10T23:48:06	bro	undo-commit	FAIL	1011	git reset --soft HEAD@{1}
+2026-10-10T23:48:06	bro	unzip-into	FAIL	984	unzip archive.zip -d ../out
+2026-10-10T23:48:06	bro	uptime	PASS	910	uptime
+2026-10-10T23:48:06	bro	weather-voice	PASS	855	curl wttr.in/Paris
+2026-10-10T23:48:06	bro	whoami	PASS	863	whoami
+2026-10-10T23:48:06	bro	why-cargo-failed	PASS	1219	cargo add serde && cargo build
+2026-10-10T23:48:06	bro	wipe-changes	PASS	990	git reset --hard HEAD
+2026-10-10T23:48:06	bro	youtube-voice	FAIL	853	open -a "YouTube"
+2026-10-10T23:48:06	bro	zip-src	PASS	1055	zip -r src.zip src
+2026-10-11T01:26:11	bro	biggest-files	PASS	2774	find . -type f -exec du -s {} \; | sort -k1 -nr | head -5
+2026-10-11T01:26:11	bro	brew-install-complete	FAIL	1464	brew install json
+2026-10-11T01:26:11	bro	brew-list	PASS	1251	brew list
+2026-10-11T01:26:11	bro	bsd-sed	PASS	1557	sed -i '' 's/foo/bar/g' config.yml
+2026-10-11T01:26:11	bro	cd-back	FAIL	1356	cd ../
+2026-10-11T01:26:11	bro	cd-home	PASS	1377	cd ~
+2026-10-11T01:26:11	bro	changed-today	FAIL	1708	git diff --nameonly --cached .
+2026-10-11T01:26:11	bro	claude-tab	PASS	1500	ctx show "Claude - auth refactor"
+2026-10-11T01:26:11	bro	copy-folder	FAIL	1497	cp src src-backup
+2026-10-11T01:26:11	bro	copy-path	FAIL	1406	pbcopy
+2026-10-11T01:26:11	bro	count-lines	FAIL	1892	zcat ~/code/site/src/README.md | wc -l
+2026-10-11T01:26:11	bro	cpu-hog	PASS	1481	kill -9 4242
+2026-10-11T01:26:11	bro	delete-logs-complete	PASS	1601	find . -name '*.log' -type f -delete
+2026-10-11T01:26:11	bro	delete-node-modules	PASS	1731	find . -name node_modules -type d -delete
+2026-10-11T01:26:11	bro	dev-server-tab-voice	PASS	1494	ctx show "Dev server"
+2026-10-11T01:26:11	bro	disk-space	PASS	1364	df -h ~
+2026-10-11T01:26:11	bro	docker-rm-complete	PASS	1562	docker run --rm -it ubuntu
+2026-10-11T01:26:11	bro	env-vars	FAIL	1735	env | grep -i env
+2026-10-11T01:26:11	bro	ffmpeg-complete	PASS	1483	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-11T01:26:11	bro	file-sizes	FAIL	1328	ls -la
+2026-10-11T01:26:11	bro	find-ctx-tab	FAIL	1520	ctx show "site"
+2026-10-11T01:26:11	bro	fix-git-identity	PASS	1973	git config --global user.email 'sam@email.com' git config --global user.name 'Sam'
+2026-10-11T01:26:11	bro	fix-python-module	PASS	1600	pip install requests
+2026-10-11T01:26:11	bro	fix-vite-missing	FAIL	1604	npm install --force
+2026-10-11T01:26:11	bro	folder-size	PASS	1386	du -sh .
+2026-10-11T01:26:11	bro	folder-sizes-sorted	FAIL	1680	du -sh ./* | sort -hr
+2026-10-11T01:26:11	bro	follow-log	PASS	1624	tail -f server.log
+2026-10-11T01:26:11	bro	force-push	PASS	1754	git push --force-with-lease origin fix/typo
+2026-10-11T01:26:11	bro	git-branch-question	PASS	1246	git branch
+2026-10-11T01:26:11	bro	git-remote	PASS	1502	git remote get-url origin
+2026-10-11T01:26:11	bro	grep-todo	PASS	2175	grep -r --include=*.yml --include=*.js --include=*.md 'TODO' src/
+2026-10-11T01:26:11	bro	hidden-files	PASS	1672	ls -A .
+2026-10-11T01:26:11	bro	home-space	FAIL	1549	du -sh ~/*
+2026-10-11T01:26:11	bro	kill-ghostty	PASS	1423	kill -9 812
+2026-10-11T01:26:11	bro	kill-node	PASS	1447	pkill -f node
+2026-10-11T01:26:11	bro	kill-safari	PASS	1486	kill -9 3001
+2026-10-11T01:26:11	bro	learned-notes	PASS	1385	code ~/Documents/notes
+2026-10-11T01:26:11	bro	mkdir-and-enter	PASS	1420	mkdir -p drafts && cd drafts
+2026-10-11T01:26:11	bro	my-ip	FAIL	1566	curl -s ifconfig.com
+2026-10-11T01:26:11	bro	new-branch	PASS	1674	git checkout -b feature/search
+2026-10-11T01:26:11	bro	node-version	PASS	1467	node -v
+2026-10-11T01:26:11	bro	open-in-finder	PASS	1442	open ~/code/site
+2026-10-11T01:26:11	bro	open-spotify	PASS	1375	open -a "Spotify"
+2026-10-11T01:26:11	bro	png-to-jpg	FAIL	1514	convert logo.png -out logo.jpg
+2026-10-11T01:26:11	bro	port-3000	PASS	1615	lsof -i :3000 -d 1
+2026-10-11T01:26:11	bro	project-in-cursor	PASS	1411	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T01:26:11	bro	readme-textedit	FAIL	1554	open -a TextEdit ~/code/site/README.md
+2026-10-11T01:26:11	bro	rebase-keep-mine	FAIL	1797	git rebase -i HEAD~1 --keep
+2026-10-11T01:26:11	bro	rename-jpeg	PASS	1731	for f in *.jpeg; do mv "$f" "${f%.jpeg}.jpg"; done
+2026-10-11T01:26:11	bro	salsa-voice	PASS	2003	open -a "Google Chrome" "https://search.brave.com/search?q=videos+about+salsa+dancing"
+2026-10-11T01:26:11	bro	show-ports	FAIL	1567	lsof -t -i TCP -s TCP:LISTEN
+2026-10-11T01:26:11	bro	stop-port-8080	PASS	1604	lsof -ti tcp:8080 | xargs kill
+2026-10-11T01:26:11	bro	sysadmin-agent	PASS	1527	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-11T01:26:11	bro	tail-log	PASS	1627	tail -n 50 server.log
+2026-10-11T01:26:11	bro	undo-commit	FAIL	1399	git reset --soft HEAD
+2026-10-11T01:26:11	bro	unzip-into	PASS	1359	unzip archive.zip -d out
+2026-10-11T01:26:11	bro	uptime	PASS	1379	uptime
+2026-10-11T01:26:11	bro	weather-voice	PASS	1257	curl wttr.in/Paris
+2026-10-11T01:26:11	bro	whoami	PASS	1475	echo $USER
+2026-10-11T01:26:11	bro	why-cargo-failed	PASS	1873	cargo add serde && cargo build
+2026-10-11T01:26:11	bro	wipe-changes	PASS	1455	git reset --hard
+2026-10-11T01:26:11	bro	youtube-voice	FAIL	1377	open -a "YouTube"
+2026-10-11T01:26:11	bro	zip-src	PASS	1434	zip -r src.zip src
+2026-10-11T01:46:08	bro	biggest-files	PASS	2377	find . -type f -exec du -s {} \; | sort -k1 -n | head -5
+2026-10-11T01:46:08	bro	brew-install-complete	FAIL	1456	brew install json
+2026-10-11T01:46:08	bro	brew-list	PASS	1296	brew list
+2026-10-11T01:46:08	bro	bsd-sed	FAIL	1561	sed -i ''
+2026-10-11T01:46:08	bro	cd-back	FAIL	1376	cd ../
+2026-10-11T01:46:08	bro	cd-home	PASS	1294	cd ~
+2026-10-11T01:46:08	bro	changed-today	FAIL	1626	git diff --nameonly --cached
+2026-10-11T01:46:08	bro	claude-tab	PASS	1526	ctx show "Claude - auth refactor"
+2026-10-11T01:46:08	bro	copy-folder	PASS	1515	cp -r src/ src-backup/
+2026-10-11T01:46:08	bro	copy-path	FAIL	1365	pbcopy
+2026-10-11T01:46:08	bro	count-lines	FAIL	1925	zcat ~/code/site/src/README.md | wc -l
+2026-10-11T01:46:08	bro	cpu-hog	PASS	1499	kill -9 4242
+2026-10-11T01:46:08	bro	delete-logs-complete	PASS	1614	find . -name '*.log' -type f -delete
+2026-10-11T01:46:08	bro	delete-node-modules	FAIL	1731	find . -name
+2026-10-11T01:46:08	bro	dev-server-tab-voice	PASS	1554	ctx show "Dev server"
+2026-10-11T01:46:08	bro	disk-space	PASS	1392	df -h ~
+2026-10-11T01:46:08	bro	docker-rm-complete	PASS	1585	docker run --rm -it ubuntu bash
+2026-10-11T01:46:08	bro	env-vars	FAIL	1716	env | grep -i env
+2026-10-11T01:46:08	bro	ffmpeg-complete	PASS	1489	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-11T01:46:08	bro	file-sizes	FAIL	1311	ls -la
+2026-10-11T01:46:08	bro	find-ctx-tab	FAIL	1663	ctx show "WindowServer"
+2026-10-11T01:46:08	bro	fix-git-identity	PASS	1940	git config --global user.email 'sam@gmail.com' git config --global user.name 'Sam'
+2026-10-11T01:46:08	bro	fix-python-module	PASS	1563	pip3 install requests
+2026-10-11T01:46:08	bro	fix-vite-missing	PASS	1419	npm install
+2026-10-11T01:46:08	bro	folder-size	PASS	1342	du -sh .
+2026-10-11T01:46:08	bro	folder-sizes-sorted	FAIL	1743	du -sh ./* | sort -hr | head -10
+2026-10-11T01:46:08	bro	follow-log	PASS	1568	tail -f server.log
+2026-10-11T01:46:08	bro	force-push	PASS	1770	git push --force-with-lease origin fix/typo
+2026-10-11T01:46:08	bro	git-branch-question	PASS	1210	git branch
+2026-10-11T01:46:08	bro	git-remote	PASS	1399	git remote get-url origin
+2026-10-11T01:46:08	bro	grep-todo	FAIL	2075	grep -i --include=*.js --include=*.ts src/* | grep -E 'TODO'
+2026-10-11T01:46:08	bro	hidden-files	PASS	1611	ls -a .
+2026-10-11T01:46:08	bro	home-space	FAIL	1373	du -sh ~/*
+2026-10-11T01:46:08	bro	kill-ghostty	PASS	1437	kill -9 812
+2026-10-11T01:46:08	bro	kill-node	FAIL	1976	kill -9 $(pgrep -d 'node' -l)
+2026-10-11T01:46:08	bro	kill-safari	PASS	1439	kill -9 3001
+2026-10-11T01:46:08	bro	learned-notes	PASS	1430	code ~/Documents/notes
+2026-10-11T01:46:08	bro	mkdir-and-enter	PASS	1399	mkdir -p drafts && cd drafts
+2026-10-11T01:46:08	bro	my-ip	PASS	1572	curl -s ifconfig.me
+2026-10-11T01:46:08	bro	new-branch	PASS	1736	git checkout -b feature/search
+2026-10-11T01:46:08	bro	node-version	FAIL	1439	nvm current
+2026-10-11T01:46:08	bro	open-in-finder	PASS	1366	open ~/code/site
+2026-10-11T01:46:08	bro	open-spotify	PASS	1371	open -a "Spotify"
+2026-10-11T01:46:08	bro	png-to-jpg	FAIL	1506	convert logo.png -out logo.jpg
+2026-10-11T01:46:08	bro	port-3000	PASS	1634	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-11T01:46:08	bro	project-in-cursor	PASS	1455	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T01:46:08	bro	readme-textedit	FAIL	1516	open ~/code/site/README.md
+2026-10-11T01:46:08	bro	rebase-keep-mine	FAIL	1900	git rebase -i HEAD~1 --keep
+2026-10-11T01:46:08	bro	rename-jpeg	PASS	1667	for f in *.jpeg; do mv "$f" "${f%.jpeg}.jpg"; done
+2026-10-11T01:46:08	bro	salsa-voice	PASS	1881	open -a "Google Chrome" "https://search.brave.com/search?q=salsa+dancing"
+2026-10-11T01:46:08	bro	show-ports	FAIL	1513	lsof -t -i TCP -sLISTEN
+2026-10-11T01:46:08	bro	stop-port-8080	PASS	1620	lsof -ti tcp:8080 | xargs kill
+2026-10-11T01:46:08	bro	sysadmin-agent	PASS	1490	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-11T01:46:08	bro	tail-log	PASS	1542	tail -n 50 server.log
+2026-10-11T01:46:08	bro	undo-commit	FAIL	1323	git reset --soft HEAD
+2026-10-11T01:46:08	bro	unzip-into	PASS	1377	unzip archive.zip -d out
+2026-10-11T01:46:08	bro	uptime	PASS	1442	uptime
+2026-10-11T01:46:08	bro	weather-voice	PASS	1202	curl wttr.in/Paris
+2026-10-11T01:46:08	bro	whoami	PASS	1477	echo $USER
+2026-10-11T01:46:08	bro	why-cargo-failed	PASS	1846	cargo add serde && cargo build
+2026-10-11T01:46:08	bro	wipe-changes	PASS	1460	git reset --hard
+2026-10-11T01:46:08	bro	youtube-voice	FAIL	1370	open -a "YouTube"
+2026-10-11T01:46:08	bro	zip-src	PASS	1419	zip -r src.zip src
+2026-10-11T01:47:53	bro	biggest-files	PASS	1948	find . -type f -exec du -s {} \; | sort -k1 -n | head -5
+2026-10-11T01:47:53	bro	brew-install-complete	FAIL	1447	brew install json
+2026-10-11T01:47:53	bro	brew-list	PASS	1279	brew list
+2026-10-11T01:47:53	bro	bsd-sed	FAIL	1550	sed -i ''
+2026-10-11T01:47:53	bro	cd-back	FAIL	1402	cd ../
+2026-10-11T01:47:53	bro	cd-home	PASS	1319	cd ~
+2026-10-11T01:47:53	bro	changed-today	FAIL	1603	git diff --nameonly --cached
+2026-10-11T01:47:53	bro	claude-tab	PASS	1543	ctx show "Claude - auth refactor"
+2026-10-11T01:47:53	bro	copy-folder	PASS	1521	cp -r src/ src-backup/
+2026-10-11T01:47:53	bro	copy-path	FAIL	1358	pbcopy
+2026-10-11T01:47:53	bro	count-lines	FAIL	1942	zcat ~/code/site/src/README.md | wc -l
+2026-10-11T01:47:53	bro	cpu-hog	PASS	1500	kill -9 4242
+2026-10-11T01:47:53	bro	delete-logs-complete	PASS	1636	find . -name '*.log' -type f -delete
+2026-10-11T01:47:53	bro	delete-node-modules	FAIL	1737	find . -name
+2026-10-11T01:47:53	bro	dev-server-tab-voice	PASS	1555	ctx show "Dev server"
+2026-10-11T01:47:53	bro	disk-space	PASS	1414	df -h ~
+2026-10-11T01:47:53	bro	docker-rm-complete	PASS	1577	docker run --rm -it ubuntu bash
+2026-10-11T01:47:53	bro	env-vars	FAIL	1755	env | grep -i env
+2026-10-11T01:47:53	bro	ffmpeg-complete	PASS	1480	ffmpeg -i talk.mov -c copy output.mp4
+2026-10-11T01:47:53	bro	file-sizes	FAIL	1309	ls -la
+2026-10-11T01:47:53	bro	find-ctx-tab	FAIL	1678	ctx show "WindowServer"
+2026-10-11T01:47:53	bro	fix-git-identity	PASS	1953	git config --global user.email 'sam@gmail.com' git config --global user.name 'Sam'
+2026-10-11T01:47:53	bro	fix-python-module	PASS	1582	pip3 install requests
+2026-10-11T01:47:53	bro	fix-vite-missing	PASS	1426	npm install
+2026-10-11T01:47:53	bro	folder-size	PASS	1345	du -sh .
+2026-10-11T01:47:53	bro	folder-sizes-sorted	FAIL	1767	du -sh ./* | sort -hr | head -10
+2026-10-11T01:47:53	bro	follow-log	PASS	1575	tail -f server.log
+2026-10-11T01:47:53	bro	force-push	PASS	1757	git push --force-with-lease origin fix/typo
+2026-10-11T01:47:53	bro	git-branch-question	PASS	1218	git branch
+2026-10-11T01:47:53	bro	git-remote	PASS	1403	git remote get-url origin
+2026-10-11T01:47:53	bro	grep-todo	FAIL	2090	grep -i --include=*.js --include=*.ts src/* | grep -E 'TODO'
+2026-10-11T01:47:53	bro	hidden-files	PASS	1597	ls -a .
+2026-10-11T01:47:53	bro	home-space	FAIL	1373	du -sh ~/*
+2026-10-11T01:47:53	bro	kill-ghostty	PASS	1410	kill -9 812
+2026-10-11T01:47:53	bro	kill-node	FAIL	1991	kill -9 $(pgrep -d 'node' -l)
+2026-10-11T01:47:53	bro	kill-safari	PASS	1445	kill -9 3001
+2026-10-11T01:47:53	bro	learned-notes	PASS	1415	code ~/Documents/notes
+2026-10-11T01:47:53	bro	mkdir-and-enter	PASS	1405	mkdir -p drafts && cd drafts
+2026-10-11T01:47:53	bro	my-ip	PASS	1579	curl -s ifconfig.me
+2026-10-11T01:47:53	bro	new-branch	PASS	1716	git checkout -b feature/search
+2026-10-11T01:47:53	bro	node-version	FAIL	1441	nvm current
+2026-10-11T01:47:53	bro	open-in-finder	PASS	1391	open ~/code/site
+2026-10-11T01:47:53	bro	open-spotify	PASS	1377	open -a "Spotify"
+2026-10-11T01:47:53	bro	png-to-jpg	FAIL	1517	convert logo.png -out logo.jpg
+2026-10-11T01:47:53	bro	port-3000	PASS	1653	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-11T01:47:53	bro	project-in-cursor	PASS	1462	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T01:47:53	bro	readme-textedit	FAIL	1477	open ~/code/site/README.md
+2026-10-11T01:47:53	bro	rebase-keep-mine	FAIL	1822	git rebase -i HEAD~1 --keep
+2026-10-11T01:47:53	bro	rename-jpeg	PASS	1669	for f in *.jpeg; do mv "$f" "${f%.jpeg}.jpg"; done
+2026-10-11T01:47:53	bro	salsa-voice	PASS	1880	open -a "Google Chrome" "https://search.brave.com/search?q=salsa+dancing"
+2026-10-11T01:47:53	bro	show-ports	FAIL	1473	lsof -t -i TCP -sLISTEN
+2026-10-11T01:47:53	bro	stop-port-8080	PASS	1644	lsof -ti tcp:8080 | xargs kill
+2026-10-11T01:47:53	bro	sysadmin-agent	PASS	1511	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-11T01:47:53	bro	tail-log	PASS	1541	tail -n 50 server.log
+2026-10-11T01:47:53	bro	undo-commit	FAIL	1337	git reset --soft HEAD
+2026-10-11T01:47:53	bro	unzip-into	PASS	1391	unzip archive.zip -d out
+2026-10-11T01:47:53	bro	uptime	PASS	1446	uptime
+2026-10-11T01:47:53	bro	weather-voice	PASS	1208	curl wttr.in/Paris
+2026-10-11T01:47:53	bro	whoami	PASS	1478	echo $USER
+2026-10-11T01:47:53	bro	why-cargo-failed	PASS	1840	cargo add serde && cargo build
+2026-10-11T01:47:53	bro	wipe-changes	PASS	1458	git reset --hard
+2026-10-11T01:47:53	bro	youtube-voice	FAIL	1389	open -a "YouTube"
+2026-10-11T01:47:53	bro	zip-src	PASS	1436	zip -r src.zip src
+2026-10-11T01:49:33	bro	uptime	PASS	1525	uptime
+2026-10-11T01:49:33	bro	whoami	PASS	1497	echo $USER
+2026-10-11T01:49:33	bro	brew-list	PASS	1273	brew list
+2026-10-11T01:49:33	bro	readme-textedit	FAIL	1474	open ~/code/site/README.md
+2026-10-11T01:49:33	bro	env-vars	FAIL	1716	env | grep -i env
+2026-10-11T01:49:33	bro	copy-folder	PASS	1530	cp -r src/ src-backup/
+2026-10-11T01:49:33	bro	png-to-jpg	FAIL	1507	convert logo.png -out logo.jpg
+2026-10-11T01:49:33	bro	file-sizes	FAIL	1316	ls -la
+2026-10-11T01:49:33	bro	cd-back	FAIL	1381	cd ../
+2026-10-11T01:49:33	bro	cd-home	PASS	1301	cd ~
+2026-10-11T01:49:33	bro	node-version	FAIL	1434	nvm current
+2026-10-11T01:49:33	bro	git-remote	PASS	1432	git remote get-url origin
+2026-10-11T01:49:33	bro	new-branch	PASS	1781	git checkout -b feature/search
+2026-10-11T01:49:33	bro	folder-sizes-sorted	FAIL	1801	du -sh ./* | sort -hr | head -10
+2026-10-11T01:49:33	bro	kill-safari	PASS	1473	kill -9 3001
+2026-10-11T01:49:33	bro	home-space	FAIL	1370	du -sh ~/*
+2026-10-11T01:49:33	bro	fix-git-identity	PASS	1987	git config --global user.email 'sam@gmail.com' git config --global user.name 'Sam'
+2026-10-11T01:49:33	bro	delete-logs-complete	PASS	1642	find . -name '*.log' -type f -delete
+2026-10-11T01:49:33	bro	youtube-voice	FAIL	1363	open -a "YouTube"
+2026-10-11T01:49:33	bro	show-ports	FAIL	1480	lsof -t -i TCP -sLISTEN
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	biggest-files	PASS	1092	du -h * | sort -hr | head -n 5
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	brew-install-complete	PASS	914	brew install jq
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	brew-list	PASS	763	brew list
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	bsd-sed	PASS	916	sed -i '' 's/foo/bar/g' config.yml
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	cd-back	PASS	792	cd -
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	cd-home	PASS	788	cd ~
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	changed-today	PASS	757	find . -type f -mtime 0
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	claude-tab	PASS	754	ctx show "Claude - auth refactor"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	copy-folder	PASS	799	cp -r src src-backup
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	copy-path	PASS	777	pwd | pbcopy
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	count-lines	PASS	1037	find src -name "*.*" | xargs wc -l
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	cpu-hog	PASS	1128	kill -9 4242
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	delete-logs-complete	PASS	791	find . -name '*.log' -delete
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	delete-node-modules	PASS	879	find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	dev-server-tab-voice	PASS	822	ctx show "Dev server"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	disk-space	PASS	1162	df -h .
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	docker-rm-complete	PASS	761	docker run --rm -it ubuntu
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	env-vars	PASS	833	env
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	ffmpeg-complete	PASS	782	ffmpeg -i talk.mov -c copy talk.mp4
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	file-sizes	PASS	833	du -sh *
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	find-ctx-tab	PASS	833	ctx show "CTX spec writing"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	fix-git-identity	PASS	901	git config --global user.email "you@example.com" && git config --global user.name "Your Name"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	fix-python-module	PASS	886	pip3 install -r requirements.txt
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	fix-vite-missing	PASS	898	npm install
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	folder-size	PASS	708	du -sh .
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	folder-sizes-sorted	PASS	838	du -sh * | sort -rh
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	follow-log	PASS	798	tail -f server.log
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	force-push	PASS	785	git push --force
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	git-branch-question	PASS	928	git branch --show-current
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	git-remote	PASS	663	git remote -v
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	grep-todo	PASS	847	grep -rn "TODO" src/
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	hidden-files	PASS	867	ls -la
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	home-space	PASS	861	du -h -d 1 ~ | sort -hr
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	kill-ghostty	PASS	861	kill 812
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	kill-node	PASS	820	killall node
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	kill-safari	PASS	1078	kill -9 3001
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	learned-notes	FAIL	755	open -a "Notes"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	mkdir-and-enter	PASS	915	mkdir -p drafts && cd drafts
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	my-ip	PASS	1030	curl -s https://ifconfig.me
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	new-branch	PASS	978	git checkout -b feature/search
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	node-version	PASS	823	node -v
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	open-in-finder	PASS	712	open .
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	open-spotify	PASS	775	open -a "Spotify"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	png-to-jpg	PASS	829	sips -s format jpeg logo.png --out logo.jpg
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	port-3000	PASS	761	lsof -nP -iTCP:3000 -sTCP:LISTEN
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	project-in-cursor	PASS	793	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	readme-textedit	PASS	888	open -a "TextEdit" README.md
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	rebase-keep-mine	FAIL	796	git rebase --onto main
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	rename-jpeg	PASS	712	for f in *.jpeg; do mv "$f" "${f%.jpeg}.jpg"; done
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	salsa-voice	PASS	754	open "https://search.brave.com/search?q=videos+about+salsa+dancing"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	show-ports	PASS	828	lsof -i -P -sTCP:LISTEN
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	stop-port-8080	PASS	939	lsof -ti tcp:8080 | xargs kill
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	sysadmin-agent	FAIL	860	open -a "Visual Studio Code" ~/Agents/sys-admin
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	tail-log	PASS	828	tail -n 50 server.log
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	undo-commit	PASS	674	git reset --soft HEAD~1
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	unzip-into	PASS	748	unzip archive.zip -d out
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	uptime	PASS	818	uptime
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	weather-voice	PASS	896	curl wttr.in
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	whoami	PASS	947	echo $USER
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	why-cargo-failed	PASS	754	cargo add serde
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	wipe-changes	PASS	752	git reset --hard HEAD
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	youtube-voice	PASS	851	open "https://www.youtube.com"
+2026-10-11T01:53:16	bro gemini-3.5-flash-lite	zip-src	PASS	932	zip -r src.zip src

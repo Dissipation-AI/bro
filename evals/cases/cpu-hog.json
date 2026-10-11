@@ -1,0 +1,4 @@
+{"request": "kill whatever is eating my cpu",
+ "processes": [{"name": "node", "pid": 4242, "cpu_percent": 187.0, "memory_mb": 900}, {"name": "WindowServer", "pid": 402, "cpu_percent": 6.1, "memory_mb": 610}, {"name": "Slack", "pid": 1650, "cpu_percent": 0.5, "memory_mb": 380}],
+ "accept": ["^kill( -[0-9A-Z]+)? 4242$"],
+ "reject": ["402", "pkill", "killall"]}

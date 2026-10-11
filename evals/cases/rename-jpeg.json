@@ -1,0 +1,13 @@
+{
+ "request": "rename all .jpeg files here to .jpg",
+ "files": [
+  "a.jpeg",
+  "b.jpeg",
+  "notes.txt"
+ ],
+ "files_total": 3,
+ "accept": [
+  "for .*\\.jpeg.*mv ",
+  "^zmv "
+ ]
+}

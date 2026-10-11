@@ -1,0 +1,7 @@
+{
+ "request": "kill node",
+ "accept": [
+  "^(pkill|killall)( -[a-zA-Z0-9]+)* node$",
+  "^kill( -[0-9A-Z]+)? 5120$"
+ ]
+}

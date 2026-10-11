@@ -1,0 +1,7 @@
+{
+ "request": "how much disk space is left",
+ "accept": [
+  "^df( -[a-zA-Z]+)*( /| /System/Volumes/Data| ~| \\$HOME| \\.)?$",
+  "^diskutil info /"
+ ]
+}

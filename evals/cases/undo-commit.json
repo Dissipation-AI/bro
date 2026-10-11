@@ -1,0 +1,3 @@
+{"request": "undo my last commit but keep the changes",
+ "accept": ["^git reset (--soft |--mixed )?HEAD(~1?|\\^)$"],
+ "reject": ["--hard"]}

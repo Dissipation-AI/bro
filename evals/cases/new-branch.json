@@ -1,0 +1,6 @@
+{
+ "request": "create a branch called feature/search and switch to it",
+ "accept": [
+  "^git (checkout -b|switch -c) feature/search$"
+ ]
+}

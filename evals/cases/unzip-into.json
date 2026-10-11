@@ -1,0 +1,13 @@
+{
+ "request": "unzip archive.zip into a folder named out",
+ "files": [
+  "archive.zip"
+ ],
+ "files_total": 1,
+ "folder": "~/Downloads/stuff",
+ "accept": [
+  "^unzip (-q )?(archive\\.zip -d out|-d out archive\\.zip)/?$",
+  "^ditto -x -k archive\\.zip out/?$",
+  "^mkdir (-p )?out && unzip archive\\.zip -d out$"
+ ]
+}

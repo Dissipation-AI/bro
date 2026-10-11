@@ -1,0 +1,6 @@
+{
+ "request": "how long has this mac been running",
+ "accept": [
+  "^uptime$"
+ ]
+}

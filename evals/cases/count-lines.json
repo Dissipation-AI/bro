@@ -1,0 +1,9 @@
+{
+ "request": "how many lines of code are in src",
+ "accept": [
+  "find src.*(-exec wc -l|xargs .*wc -l|\\| *xargs wc -l)",
+  "wc -l src/\\*",
+  "cat src/\\*.*\\| *wc -l",
+  "^(cloc|tokei|scc) src/?$"
+ ]
+}

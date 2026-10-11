@@ -1,0 +1,6 @@
+{
+ "request": "Bro, open YouTube.",
+ "accept": [
+  "^open (-a [^ ]+ )?\"?https?://(www\\.)?youtube\\.com"
+ ]
+}

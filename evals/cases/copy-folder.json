@@ -1,0 +1,7 @@
+{
+ "request": "make a copy of the src folder called src-backup",
+ "accept": [
+  "^cp -[rRa]+ src/? src-backup/?$",
+  "^ditto src/? src-backup/?$"
+ ]
+}

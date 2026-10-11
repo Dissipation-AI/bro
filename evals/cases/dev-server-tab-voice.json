@@ -1,0 +1,3 @@
+{"request": "Bro, show me the tab with the dev server.",
+ "tabs": [{"number": 42, "name": "Dev server", "folder": "~/code/site", "running": "npm run dev"}, {"number": 44, "name": "Claude - auth refactor", "folder": "~/code/site", "running": "claude"}],
+ "accept": ["^ctx show (\"Dev server\"|tab 42)$"]}

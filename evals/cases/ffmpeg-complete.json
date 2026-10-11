@@ -1,0 +1,12 @@
+{
+ "request": "convert to mp4 without re-encoding",
+ "line": "ffmpeg -i talk.mov",
+ "files": [
+  "talk.mov"
+ ],
+ "files_total": 1,
+ "folder": "~/Movies/talks",
+ "accept": [
+  "^ffmpeg -i talk\\.mov .*(-c copy|-codec copy|-c:v copy)( .*)? [^ ]*\\.mp4$"
+ ]
+}

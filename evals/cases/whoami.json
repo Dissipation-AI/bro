@@ -1,0 +1,6 @@
+{
+ "request": "show my username",
+ "accept": [
+  "^(whoami|id -un|echo \"?\\$USER\"?)$"
+ ]
+}

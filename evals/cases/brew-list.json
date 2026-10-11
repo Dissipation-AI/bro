@@ -1,0 +1,7 @@
+{
+ "request": "list my installed homebrew packages",
+ "accept": [
+  "^brew (list|ls)( --formula| --versions)?$",
+  "^brew leaves$"
+ ]
+}

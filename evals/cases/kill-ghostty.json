@@ -1,0 +1,5 @@
+{"request": "kill that ghostty process",
+ "processes": [{"name": "ghostty", "pid": 812, "cpu_percent": 4.2, "memory_mb": 640}, {"name": "WindowServer", "pid": 402, "cpu_percent": 6.1, "memory_mb": 610}, {"name": "Slack", "pid": 1650, "cpu_percent": 0.5, "memory_mb": 380}],
+ "apps": ["Ghostty"],
+ "accept": ["^(pkill|killall)\\b.*ghostty", "^kill( -[0-9A-Z]+)? 812$"],
+ "reject": ["-1\\b", "sudo"]}

@@ -1,0 +1,46 @@
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	biggest-files	PASS	767	ls -lC | sort -k5 -nr | head -5
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	bsd-sed	FAIL	684	sed -i 's/foo/bar/g' config.yml
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	changed-today	FAIL	1629	git log --pretty=format:'%T%t@%H%d' --date=iso --show-modified --show-name --project=. --stat --date=yesterday | grep -i "changed"
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	count-lines	FAIL	548	wc -l < src
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	cpu-hog	FAIL	849	kill -9 $(ps -eo ppid -p $(pgrep -df cpu))
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	delete-node-modules	PASS	925	find . -name "node_modules" -type d -exec rm -r {} \;
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	dev-server-tab-voice	FAIL	501	git tab dev-server
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	disk-space	PASS	465	df -h
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	ffmpeg-complete	FAIL	839	ffmpeg -i talk.mov -c copy -movflags +faststart output.mp4
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	find-ctx-tab	FAIL	545	ps -ef | grep ctx
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	fix-python-module	FAIL	410	echo "fix it"
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	force-push	FAIL	545	git push --force my-branch
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	git-branch-question	PASS	390	git branch
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	kill-ghostty	FAIL	727	kill -9 $(ps -ef | grep ghostty)
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	learned-notes	FAIL	491	open -a Notes
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	my-ip	FAIL	444	ip addr show
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	open-spotify	FAIL	404	open spotify
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	port-3000	PASS	573	lsof -i :3000
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	project-in-cursor	FAIL	410	code .
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	rebase-keep-mine	FAIL	528	git rebase --onto main --keep
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	salsa-voice	PASS	821	open -a Safari https://www.google.com/search?q=salsa+dancing
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	sysadmin-agent	FAIL	477	open ~/.sysadmin-agent
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	undo-commit	PASS	573	git reset --soft HEAD~1
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	why-cargo-failed	FAIL	1447	grep -E "error|permission denied" /var/log/syslog | grep -v "INFO" | sed 's/^/ERROR: /' | tee -a error.log
+2026-10-10T23:29:28	butterfish http://127.0.0.1:11435/v1	zip-src	FAIL	502	zip -r src/.
+2026-10-10T23:38:42	butterfish http://127.0.0.1:11435/v1	uptime whoami brew-list readme-textedit env-vars copy-folder png-to-jpg file-sizes cd-back cd-home node-version git-remote new-branch folder-sizes-sorted kill-safari home-space fix-git-identity delete-logs-complete youtube-voice show-ports	FAIL	38	Error: Please provide a description to generate a command
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	uptime	FAIL	738	sysctl -n sys_uptime | bc -l
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	whoami	PASS	437	echo $USER
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	brew-list	FAIL	411	brew list installed
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	readme-textedit	FAIL	406	code readme
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	env-vars	PASS	377	env
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	copy-folder	PASS	541	cp -r src src-backup
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	png-to-jpg	FAIL	545	convert logo.png -out logo.jpg
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	file-sizes	PASS	476	du -h *
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	cd-back	FAIL	404	cd ../
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	cd-home	PASS	454	cd ~
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	node-version	FAIL	453	which node
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	git-remote	PASS	439	git remote -v
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	new-branch	FAIL	627	git checkout -b feature/search && git switch feature/search
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	folder-sizes-sorted	FAIL	686	du -h /* | sort -k 5 -nr
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	kill-safari	FAIL	513	killall -9 safari
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	home-space	FAIL	656	du -sh ~/* 2>/dev/null
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	fix-git-identity	FAIL	405	echo "fix it"
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	delete-logs-complete	PASS	630	find . -name '*.log' -exec rm {} \;
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	youtube-voice	FAIL	380	open youtube
+2026-10-10T23:39:22	butterfish http://127.0.0.1:11435/v1	show-ports	FAIL	621	netstat -tulnp | grep LISTEN

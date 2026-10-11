@@ -1,0 +1,2 @@
+{"request": "show files I changed today in this project",
+ "accept": ["^find \\.? ?.*(-mtime -1|-mtime 0|-mmin -[0-9]+|-newer|-newermt)", "^git (status|diff --name-only)"]}

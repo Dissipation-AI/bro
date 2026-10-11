@@ -1,0 +1,6 @@
+{
+ "request": "show my environment variables",
+ "accept": [
+  "^(env|printenv)$"
+ ]
+}

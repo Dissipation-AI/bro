@@ -1,0 +1,21 @@
+{
+ "request": "safari is frozen, kill it",
+ "processes": [
+  {
+   "name": "Safari",
+   "pid": 3001,
+   "cpu_percent": 99.0,
+   "memory_mb": 1200
+  },
+  {
+   "name": "WindowServer",
+   "pid": 402,
+   "cpu_percent": 6.1,
+   "memory_mb": 610
+  }
+ ],
+ "accept": [
+  "^(pkill|killall)( -[a-zA-Z0-9]+)* \"?Safari\"?$",
+  "^kill( -[0-9A-Z]+)? 3001$"
+ ]
+}

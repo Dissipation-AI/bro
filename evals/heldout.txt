@@ -1,0 +1,1 @@
+uptime whoami brew-list readme-textedit env-vars copy-folder png-to-jpg file-sizes cd-back cd-home node-version git-remote new-branch folder-sizes-sorted kill-safari home-space fix-git-identity delete-logs-complete youtube-voice show-ports

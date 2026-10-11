@@ -1,0 +1,3 @@
+{"request": "open the notes",
+ "examples": [{"request": "open my notes", "command": "code ~/Documents/notes"}],
+ "accept": ["^code ~/Documents/notes$"]}

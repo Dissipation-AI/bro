@@ -1,0 +1,4 @@
+{"request": "fix it",
+ "folder": "~/code/scraper", "files": ["app.py", "requirements.txt"], "files_total": 2,
+ "recent_commands": [{"command": "python3 app.py", "exit_status": 1, "output": "Traceback (most recent call last):\n  File \"/Users/c/code/scraper/app.py\", line 1, in <module>\n    import requests\nModuleNotFoundError: No module named 'requests'"}],
+ "accept": ["(pip3?|python3 -m pip|uv pip) install (-r requirements\\.txt|requests)"]}
