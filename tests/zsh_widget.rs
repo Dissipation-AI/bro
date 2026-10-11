@@ -398,9 +398,10 @@ fn prompt_fills_as_the_answer_streams() {
     if !available() {
         return;
     }
-    // Four characters every 150 ms: the command shows up while the explanation is still coming.
+    // Four characters every 60 ms (about 2 s in all, well inside the test config's 5 s timeout): the
+    // command shows up while the explanation is still coming.
     let answer = r#"{"command": "du -sh * | sort -rh", "explanation": "Sizes of everything here, largest first.", "confidence": "high"}"#;
-    let server = serve_with(answer, Duration::ZERO, Some(Duration::from_millis(150)));
+    let server = serve_with(answer, Duration::ZERO, Some(Duration::from_millis(60)));
     let body = r#"
 send "bro how big is everything here\r"
 # zle redraws only what changed, so match pieces: the command arrives before the explanation.
