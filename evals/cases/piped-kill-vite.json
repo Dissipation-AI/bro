@@ -1,0 +1,5 @@
+{"request": "kill the one running vite",
+ "piped": {"command": "ps aux | grep node",
+  "output": "sam   5120   2.1  1.4 412340 230112 s003  S+   9:12AM   0:41.20 node /Users/sam/code/site/node_modules/.bin/vite\nsam   5133   0.4  0.9 401220 151004 s004  S+   9:14AM   0:08.02 node server.js\nsam   5301   0.0  0.0 408112   1520 s005  S+   9:30AM   0:00.00 grep node\n"},
+ "accept": ["^kill( -[0-9A-Z]+)? 5120$"],
+ "reject": ["\\| *bro "]}

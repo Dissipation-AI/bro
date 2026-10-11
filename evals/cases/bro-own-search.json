@@ -1,0 +1,7 @@
+{"request": "change your default web search to use Google not Brave",
+ "accept": [
+  "^bro config$",
+  "^sed -i '' .*google.* ~/\\.config/bro/config\\.toml$",
+  "^cat ~/\\.config/bro/config\\.toml *\\| *bro .*google"
+ ],
+ "reject": ["^open "]}

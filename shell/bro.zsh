@@ -4,6 +4,9 @@
 # sends the rest of the line, verbatim, to bro instead of zsh, so apostrophes, `?` and `!` are
 # fine. The answer replaces the line; nothing runs until you press Enter again.
 # __BRO_KEY__ sends whatever is typed to bro to finish it.
+#
+# `cat file | bro <request>` runs bro as an ordinary command: it shows the piped text (like tee)
+# and leaves its answer in a file named after this shell, which is put in the next prompt.
 
 [[ -o interactive ]] || return 0
 (( ${+_bro_loaded} )) && return 0
@@ -14,6 +17,9 @@ typeset -g _bro_bin=__BRO_BIN__
 typeset -g _bro_status=0       # exit status of the last command
 typeset -g _bro_waiting=0      # 1: a suggestion is in the prompt; 2: the next command ran
 typeset -g _bro_req= _bro_sug= _bro_ran=
+typeset -g _bro_pending=__BRO_PENDING__/$$
+# Which terminal session piped output belongs to, and where bro leaves answers for this shell.
+export BRO_SESSION=$$
 
 # Record what was run after a suggestion, and its exit status (learning). In the background.
 _bro_precmd() {
@@ -26,6 +32,12 @@ _bro_precmd() {
   fi
 }
 _bro_preexec() {
+  # So `… | bro` knows which command's output it's reading.
+  if [[ $1 == *[Bb][Rr][Oo]* ]]; then
+    export BRO_COMMAND_LINE=$1
+  else
+    unset BRO_COMMAND_LINE
+  fi
   if (( _bro_waiting == 1 )); then
     _bro_ran=$1
     _bro_waiting=2
@@ -55,6 +67,26 @@ _bro_clear() {
   POSTDISPLAY=
   region_highlight=(${region_highlight:#*memo=bro})
 }
+# A new prompt: clear the old explanation, and put in an answer left by `… | bro <request>`.
+_bro_line_init() {
+  _bro_clear
+  [[ -f $_bro_pending ]] || return 0
+  local -a rec
+  rec=("${(@f)$(<$_bro_pending)}")
+  command rm -f -- $_bro_pending
+  local US=$'\x1f'
+  local st=$rec[1] command=${rec[2]//$US/$'\n'} explanation=${rec[3]//$US/ }
+  [[ -n $command ]] || return 0
+  _bro_unused
+  BUFFER=$command CURSOR=$#BUFFER
+  _bro_req=${rec[4]//$US/ } _bro_sug=$command _bro_waiting=1 _bro_shown=$command
+  if [[ $st == danger ]]; then
+    _bro_show "$explanation" red
+  elif [[ -n $explanation ]]; then
+    _bro_show "bro: $explanation" 8
+  fi
+}
+
 # The explanation describes the suggestion; once the line is edited, it no longer applies.
 typeset -g _bro_shown=
 _bro_redraw() {
@@ -169,6 +201,6 @@ zle -N _bro_complete
 bindkey -M emacs '__BRO_KEY__' _bro_complete
 bindkey -M viins '__BRO_KEY__' _bro_complete
 autoload -Uz add-zle-hook-widget && {
-  add-zle-hook-widget line-init _bro_clear
+  add-zle-hook-widget line-init _bro_line_init
   add-zle-hook-widget line-pre-redraw _bro_redraw
 }

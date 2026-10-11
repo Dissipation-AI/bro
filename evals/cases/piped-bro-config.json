@@ -1,0 +1,6 @@
+{"request": "set the web search to google",
+ "piped": {"command": "cat ~/.config/bro/config.toml",
+  "output": "endpoint = \"https://generativelanguage.googleapis.com/v1beta/openai\"\nmodel = \"gemini-3.5-flash-lite\"\napi_key_env = \"GEMINI_API_KEY\"\ntimeout_ms = 15000\ntemperature = 0.0\nmax_context_tokens = 6000\nsearch_url = \"https://search.brave.com/search?q={query}\"\nbrowser = \"default\"\ncomplete_key = \"^G\"\nhistory_examples = 20\n"},
+ "accept": ["^sed -i '' .*search\\.brave\\.com.*google\\.com.* ~/\\.config/bro/config\\.toml$",
+            "^sed -i '' .*search_url.*google\\.com.* ~/\\.config/bro/config\\.toml$"],
+ "reject": ["\\| *bro "]}

@@ -10,6 +10,7 @@ pub mod history;
 pub mod index;
 pub mod learned;
 pub mod man;
+pub mod piped;
 pub mod processes;
 pub mod system;
 
@@ -27,6 +28,10 @@ pub struct Context {
     pub request: String,
     /// A half-typed command line, when bro was started with Ctrl-G.
     pub line: String,
+    /// Output piped into this request (`cat file | bro …`).
+    pub piped: Option<Piped>,
+    /// Output piped into bro earlier in this terminal session, oldest first.
+    pub earlier_piped: Vec<Piped>,
     pub folder: String,
     pub git: Option<Git>,
     /// First entries of the folder listing; directories end in `/`.
@@ -67,6 +72,16 @@ pub struct RecentCommand {
     pub exit_status: Option<i32>,
     /// Tail of the output, when known (inside ctx, or in an eval snapshot).
     pub output: Option<String>,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Piped {
+    /// The command whose output it is, when known.
+    pub command: Option<String>,
+    pub output: String,
+    /// Unix seconds, for expiring saved output.
+    pub time: u64,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]

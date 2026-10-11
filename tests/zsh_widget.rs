@@ -458,3 +458,30 @@ expect $prompt
     assert!(ok, "{out}");
     assert!(!out.contains("BUFFER=[tar --exclude"), "a cancelled half-answer must not stay in the prompt: {out}");
 }
+
+#[test]
+fn piped_bro_shows_the_text_and_fills_the_next_prompt() {
+    if !available() {
+        return;
+    }
+    let server = serve("sed -i '' 's/brave/google/' cfg.toml\n# Switches search to Google.", Duration::ZERO);
+    let body = r#"
+send "print -r 'search_url = brave' | bro set search to google\r"
+expect {
+  -ex {search_url = brave} {}
+  timeout { puts "\nFAIL: piped text not shown"; exit 1 }
+}
+expect {
+  -ex {Switches search} {}
+  timeout { puts "\nFAIL: next prompt not filled"; exit 1 }
+}
+send "\024"
+expect {
+  -ex {STATE BUFFER=[sed -i '' 's/brave/google/' cfg.toml] NOTE=[   bro: Switches search to Google.]} {}
+  timeout { puts "\nFAIL: final state wrong"; exit 1 }
+}
+send "\025"
+"#;
+    let (ok, out) = run_expect("pipe", &server, body);
+    assert!(ok, "{out}");
+}

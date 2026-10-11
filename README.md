@@ -4,7 +4,7 @@
 
 **Say what you want. Get the command. Press Enter.**
 
-`bro` turns plain English into a shell command, using what's on your screen.<br>
+`bro` turns plain English into a shell command, using the context of your terminal session.<br>
 It fills your next prompt and **never runs anything by itself**.
 
 [![ci](https://github.com/Dissipation-AI/bro/actions/workflows/ci.yml/badge.svg)](https://github.com/Dissipation-AI/bro/actions/workflows/ci.yml)
@@ -41,6 +41,7 @@ error[E0432]: unresolved import `serde`
 - [Why bro](#why-bro)
 - [Install](#install)
 - [Using it](#using-it)
+- [Pipe things into bro](#pipe-things-into-bro)
 - [Talk to it: voice dictation](#talk-to-it-voice-dictation)
 - [Pick a model](#pick-a-model)
 - [What bro looks at](#what-bro-looks-at)
@@ -58,8 +59,8 @@ error[E0432]: unresolved import `serde`
 
 |  |  |
 |---|---|
-| 🧠 **It sees what you see** | Your last commands *and their output*, the folder, git branch, running processes, environment, installed apps, your projects. "Fix it" and "kill that" just work. |
-| ⚡ **It's fast** | One native binary, no runtime. Under **10 ms** from Enter to the request leaving your Mac. With Gemini Flash-Lite the whole answer arrives in about **0.8 s**. |
+| 🧠 **It knows your terminal session** | Your last commands *and their output*, the folder, git branch, running processes, environment, installed apps, your projects. "Fix it" and "kill that" just work. |
+| ⚡ **It's fast** | One native binary, no runtime. Under **10 ms** from Enter to the request leaving your Mac. With Gemini Flash-Lite the whole answer arrives in about **0.9 s**. |
 | ✋ **It never runs anything** | The command lands in your prompt. You read it, edit it if you like, and press Enter yourself. Risky commands are flagged in red. |
 | 🎙️ **It's voice-friendly** | `Bro, open a browser searching for salsa dancing videos.` works, capital letters, commas, apostrophes and full stop included. |
 | 🏠 **It runs on your Mac if you want** | Works with Apple's on-device model (free and private), Ollama, llama.cpp, LM Studio, or any cloud endpoint that speaks the OpenAI API. |
@@ -117,6 +118,36 @@ Because bro catches the line *before* zsh parses it, you can use any punctuation
 
 ---
 
+## Pipe things into bro
+
+Sometimes bro needs to *look* at something before it can answer: a config file, a log, the
+output of `ps`. Pipe it in:
+
+```console
+~ $ cat ~/.config/bro/config.toml | bro set the web search to google
+endpoint = "https://generativelanguage.googleapis.com/v1beta/openai"
+model = "gemini-3.5-flash-lite"
+search_url = "https://search.brave.com/search?q={query}"        ← passed through, like tee
+…
+~ $ sed -i '' 's|search_url = .*|search_url = "https://www.google.com/search?q={query}"|' ~/.config/bro/config.toml█
+  bro: switches the web search to Google
+```
+
+- **It works like `tee`:** whatever you pipe in is shown as it arrives, so you see what bro sees.
+- **The answer lands in your next prompt**, exactly as with `bro …` on its own. Nothing runs.
+- **bro remembers it.** The last few things piped into bro in this terminal (redacted, for up to
+  a day) are part of the context for your later requests, so "now change the model too" works.
+  Outside [CTX](#ctx), this is how bro gets to see a command's output at all.
+- **bro writes these for you.** When it needs to see something it can't, it suggests the pipe
+  itself: ask *"fix the port in docker-compose.yml"* and you may get
+  `cat docker-compose.yml | bro change the web port to 8080`. Press Enter, bro reads the file and
+  answers again. Requests can chain like this as many times as it takes.
+
+Ask bro about bro (*"change your default search to Google"*) and it knows where its own settings
+live, or suggests `bro config`.
+
+---
+
 ## Talk to it: voice dictation
 
 bro was built to be spoken to. Hold a key, say *"Bro, find the biggest files in my downloads
@@ -144,8 +175,8 @@ to anything with an OpenAI-compatible `/v1/chat/completions` endpoint.
 
 | Preset | Where it runs | Cost | Speed | Notes |
 |---|---|---|---|---|
-| **Google Gemini** (`gemini-3.5-flash-lite`) | Google's cloud | free tier available | **~0.8 s** | Most accurate in our evals. Needs an API key from [Google AI Studio](https://aistudio.google.com/apikey). |
-| **apfel** (Apple's on-device model) | your Mac | free | ~1.5 s | Private, no key needed, macOS 26+. [apfel](https://apfel.franzai.com/) serves Apple's built-in model; start it with `brew services start apfel`. Small model, small context. |
+| **Google Gemini** (`gemini-3.5-flash-lite`) | Google's cloud | free tier available | **~0.9 s** | Most accurate in our evals. Needs an API key from [Google AI Studio](https://aistudio.google.com/apikey). |
+| **apfel** (Apple's on-device model) | your Mac | free | ~1.8 s | Private, no key needed, macOS 26+. [apfel](https://apfel.franzai.com/) serves Apple's built-in model; start it with `brew services start apfel`. Small model, small context. |
 | **Ollama** | your Mac | free | depends on model and Mac | e.g. `ollama pull qwen3:8b` |
 | **llama.cpp server** | your Mac | free | depends | |
 | **LM Studio** | your Mac | free | depends | |
@@ -240,6 +271,9 @@ $ echo "list the five biggest files here" | bro --json
 {"command":"du -h * | sort -hr | head -n 5","explanation":"…","confidence":"high","dangerous":false,"danger_reason":null}
 ```
 
+With a request *and* piped input (`some-command | bro --json <request>`), the piped text is
+context for the request; with `--json` it isn't echoed back.
+
 Exit status is 0 when a command was produced, 1 when not. bro doesn't know who is calling; a
 tool that wants a command for its *own* syntax puts that tool's help text in the request.
 
@@ -318,7 +352,7 @@ CTX only through the `ctx` command line; without it, those sources are simply ab
 
 ## Evals
 
-`evals/run.sh` runs **63 realistic cases** (each a saved context snapshot plus the commands that
+`evals/run.sh` runs **67 realistic cases** (each a saved context snapshot plus the commands that
 count as right or wrong) against any endpoint, and against other tools as baselines. 20 of them
 are held out: they were never used while tuning prompts.
 
@@ -332,10 +366,10 @@ evals/run.sh kill-ghostty bsd-sed                      # just some cases
 
 Results on an M4 Pro, October 2026:
 
-| Tool and model | All 63 cases | 20 held-out cases | Typical time per request |
+| Tool and model | All 67 cases | 20 held-out cases | Typical time per request |
 |---|---|---|---|
-| **bro + Gemini 3.5 Flash-Lite** | **60 / 63** | **20 / 20** | **0.8 s** |
-| bro + apfel (Apple on-device) | 42–44 / 63 | 10 / 20 | 1.5 s |
+| **bro + Gemini 3.5 Flash-Lite** | **64 / 67** | **20 / 20** | **0.9 s** |
+| bro + apfel (Apple on-device) | 45 / 67 | 10 / 20 | 1.8 s |
 | [Butterfish](https://github.com/bakks/butterfish) + apfel | — | 7 / 20 | — |
 | apfel's own `cmd` | — | 7 / 20 | — |
 

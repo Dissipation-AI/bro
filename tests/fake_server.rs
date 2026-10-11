@@ -233,3 +233,65 @@ fn overhead_is_small() {
     // Generous for debug builds and loaded CI machines; release runs take a few milliseconds.
     assert!(best < Duration::from_millis(150), "best of 5 took {best:?}");
 }
+
+/// Last user message of the n-th request.
+fn request_text(server: &FakeServer, n: usize) -> String {
+    let requests = server.requests.lock().unwrap();
+    let body: serde_json::Value = serde_json::from_str(&requests[n]).unwrap();
+    body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap().to_string()
+}
+
+#[test]
+fn piped_text_passes_through_and_is_remembered() {
+    let server = serve(
+        &answer(
+            "sed -i '' 's#search.brave.com/search#www.google.com/search#' ~/.config/bro/config.toml",
+            "Uses Google.",
+        ),
+        Duration::ZERO,
+    );
+    let sb = Sandbox::new("piped", &server.url);
+    let piped = "search_url = \"https://search.brave.com/search?q={query}\"\nexport OPENAI_API_KEY=sk-proj-Qk3vT9xLm2Rp8WzA4bN6cY1dF7gH0jKs\n";
+    let mut c = sb.command();
+    c.args(["set", "the", "web", "search", "to", "google"])
+        .env("BRO_COMMAND_LINE", "cat ~/.config/bro/config.toml | bro set the web search to google")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    let mut child = c.spawn().unwrap();
+    child.stdin.take().unwrap().write_all(piped.as_bytes()).unwrap();
+    let o = child.wait_with_output().unwrap();
+    assert!(o.status.success(), "{}", stderr(&o));
+    // Like tee: stdout is exactly what came in. Not a terminal, so the command goes to stderr.
+    assert_eq!(stdout(&o), piped);
+    assert!(stderr(&o).starts_with("sed -i ''"), "{}", stderr(&o));
+
+    let first = request_text(&server, 0);
+    assert!(first.contains("Piped into bro, the output of `cat ~/.config/bro/config.toml`:"), "{first}");
+    assert!(first.contains("search.brave.com"), "{first}");
+    assert!(!first.contains("sk-proj-Qk3vT9"), "redacted: {first}");
+
+    // A later request in the same session sees it, redacted on disk too.
+    let mut c = sb.command();
+    c.args(["now", "open", "the", "config"]);
+    run(c);
+    let second = request_text(&server, 1);
+    assert!(second.contains("Output piped into bro earlier in this terminal"), "{second}");
+    assert!(second.contains("$ cat ~/.config/bro/config.toml | bro"), "{second}");
+    let saved = std::fs::read_dir(sb.home.join("Library/Caches/bro/piped")).unwrap().flatten().next().unwrap();
+    assert!(!std::fs::read_to_string(saved.path()).unwrap().contains("sk-proj-Qk3vT9"));
+}
+
+#[test]
+fn piped_answer_goes_to_the_next_prompt_with_the_integration() {
+    let server = serve(&answer("open -a Safari", "Opens Safari."), Duration::ZERO);
+    let sb = Sandbox::new("pending", &server.url);
+    let mut c = sb.command();
+    c.args(["open", "it"]).env("BRO_SESSION", "4242").stdin(Stdio::piped()).stdout(Stdio::piped());
+    let mut child = c.spawn().unwrap();
+    child.stdin.take().unwrap().write_all(b"Safari\n").unwrap();
+    let o = child.wait_with_output().unwrap();
+    assert_eq!(stdout(&o), "Safari\n");
+    let pending = std::fs::read_to_string(sb.home.join("Library/Caches/bro/pending/4242")).unwrap();
+    assert_eq!(pending, "ok\nopen -a Safari\nOpens Safari.\nopen it\n");
+}

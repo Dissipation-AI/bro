@@ -117,6 +117,10 @@ impl Topics {
             "wrong", "retry", "worked", "work",
         ])
     }
+    /// About bro itself ("change your config", "bro's search engine").
+    fn about_bro(&self) -> bool {
+        self.any(&["bro", "bros", "your", "yourself"])
+    }
     fn about_search(&self) -> bool {
         self.any(&[
             "search", "web", "browser", "google", "look", "lookup", "website", "online", "internet", "videos", "video",
@@ -173,6 +177,8 @@ fn system_prompt(config: &Config, topics: &Topics, c: &Context, last_failed: boo
                     "manual" => !c.manuals.is_empty(),
                     "programs" => !c.programs.is_empty(),
                     "learned" => !c.examples.is_empty(),
+                    "piped" => c.piped.is_some(),
+                    "self" => topics.about_bro(),
                     _ => true,
                 };
                 applies.then(|| rule.to_string())
@@ -363,6 +369,8 @@ fn url_encode(word: &str) -> String {
 /// (SPEC: the last command's output at ~20 lines, the top 5 processes, 5 past requests).
 struct Limits {
     output_lines: usize,
+    /// Lines of text piped into this request: it was sent on purpose, so more of it is kept.
+    piped_lines: usize,
     outputs_shown: usize,
     processes: usize,
     examples: usize,
@@ -378,6 +386,7 @@ impl Limits {
         if config.small() {
             Limits {
                 output_lines: 20,
+                piped_lines: 60,
                 outputs_shown: 1,
                 processes: 5,
                 examples: 5.min(config.history_examples),
@@ -390,6 +399,7 @@ impl Limits {
         } else {
             Limits {
                 output_lines: 60,
+                piped_lines: 200,
                 outputs_shown: 3,
                 processes: 30,
                 examples: config.history_examples,
@@ -424,6 +434,15 @@ fn sections(c: &Context, topics: &Topics, config: &Config) -> Vec<String> {
     let limits = Limits::for_config(config);
     let mut out = Vec::new();
 
+    if let Some(p) = &c.piped {
+        let mut s = match &p.command {
+            Some(command) => format!("Piped into bro, the output of `{command}`:"),
+            None => "Piped into bro:".to_string(),
+        };
+        push_indented(&mut s, &head_and_tail(&p.output, limits.piped_lines));
+        out.push(s);
+    }
+
     if !c.recent_commands.is_empty() {
         let mut s = String::from("Commands already run here, oldest first:");
         let first_output = c.recent_commands.len().saturating_sub(limits.outputs_shown);
@@ -442,6 +461,15 @@ fn sections(c: &Context, topics: &Topics, config: &Config) -> Vec<String> {
                     s.push_str(l);
                 }
             }
+        }
+        out.push(s);
+    }
+
+    if !c.earlier_piped.is_empty() {
+        let mut s = String::from("Output piped into bro earlier in this terminal, oldest first:");
+        for p in &c.earlier_piped {
+            s.push_str(&format!("\n$ {} | bro", p.command.as_deref().unwrap_or("(a command)")));
+            push_indented(&mut s, &context::ctx::tail_lines(&p.output, limits.output_lines));
         }
         out.push(s);
     }
@@ -567,6 +595,29 @@ fn sections(c: &Context, topics: &Topics, config: &Config) -> Vec<String> {
     out
 }
 
+fn push_indented(s: &mut String, text: &str) {
+    for l in text.lines() {
+        s.push_str("\n    ");
+        s.push_str(l);
+    }
+}
+
+/// The first and last lines of a long text, with a note of how many were skipped.
+fn head_and_tail(text: &str, max_lines: usize) -> String {
+    let lines: Vec<&str> = text.lines().collect();
+    if lines.len() <= max_lines {
+        return lines.join("\n");
+    }
+    let head = max_lines / 2;
+    let tail = max_lines - head;
+    format!(
+        "{}\n… ({} lines skipped)\n{}",
+        lines[..head].join("\n"),
+        lines.len() - head - tail,
+        lines[lines.len() - tail..].join("\n")
+    )
+}
+
 /// Keep sections in priority order while they fit; a section that doesn't fit is shortened to
 /// whole lines if that leaves something useful, otherwise dropped.
 fn fit(sections: Vec<String>, budget: usize) -> Vec<String> {
@@ -647,6 +698,27 @@ mod tests {
         let m = build(&c, &config);
         assert!(m[0].content.contains("ctx show"));
         assert!(m.last().unwrap().content.contains("tab 42 \"Dev server\""));
+    }
+
+    #[test]
+    fn piped_text_comes_first_with_its_rule() {
+        let mut c = ctx("set the web search to google");
+        c.piped = Some(crate::context::Piped {
+            command: Some("cat ~/.config/bro/config.toml".into()),
+            output: (1..=300).map(|i| format!("line {i}")).collect::<Vec<_>>().join("\n"),
+            time: 0,
+        });
+        c.folder = "~/code".into();
+        let m = build(&c, &Config::default());
+        let user = &m.last().unwrap().content;
+        assert!(user.starts_with("Piped into bro, the output of `cat ~/.config/bro/config.toml`:"), "{user}");
+        assert!(user.contains("line 1\n") && user.contains("line 300") && user.contains(" lines skipped)"), "{user}");
+        assert!(m[0].content.contains("Don't pipe it into bro again"));
+        assert!(!m[0].content.contains("You are bro. Your settings"));
+
+        let m = build(&ctx("change your default web search to google"), &Config::default());
+        assert!(m[0].content.contains("~/.config/bro/config.toml"));
+        assert!(!m[0].content.contains("Don't pipe it into bro again"));
     }
 
     #[test]

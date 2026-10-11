@@ -1,4 +1,4 @@
-//! bro: turns what you meant into a shell command, using what's on your screen.
+//! bro: turns what you meant into a shell command, using the context of your terminal session.
 //! It never runs anything; it fills your prompt (through the zsh widget) or prints the command.
 
 mod config;
@@ -24,6 +24,10 @@ Ctrl-G sends a half-typed command line to bro to finish it.
 As a plain command, the command goes to stdout and the explanation to stderr:
   bro list the five biggest files here
   echo \"list the five biggest files here\" | bro --json
+
+Pipe something into bro to show it what to work with. bro passes it through, like tee, and
+keeps it for later requests in this terminal:
+  cat ~/.config/bro/config.toml | bro set the web search to google
 
 Setup:
   bro install          add bro to ~/.zshrc
@@ -139,11 +143,29 @@ fn main() -> ExitCode {
     };
 
     let mut request = args.words.join(" ");
-    if request.trim().is_empty() && !std::io::stdin().is_terminal() {
+    let stdin_is_pipe = !std::io::stdin().is_terminal();
+    // `… | bro <request>`: the piped text is something to look at, shown as it passes through
+    // (like tee) unless stdout is for --json or --show-prompt.
+    let tee = stdin_is_pipe && !request.trim().is_empty() && !args.zle && !args.json && !args.show_prompt;
+    let mut piped: Option<context::Piped> = None;
+    if stdin_is_pipe && request.trim().is_empty() {
         let mut stdin = String::new();
         let _ = std::io::stdin().read_to_string(&mut stdin);
         request = stdin;
+    } else if stdin_is_pipe && !args.zle {
+        let output = if tee {
+            context::piped::tee(&mut std::io::stdin().lock(), &mut std::io::stdout().lock())
+        } else {
+            context::piped::tee(&mut std::io::stdin().lock(), &mut std::io::sink())
+        };
+        if !output.trim().is_empty() {
+            let command = std::env::var("BRO_COMMAND_LINE").ok().and_then(|line| context::piped::source_command(&line));
+            piped = Some(context::Piped { command, output, time: 0 });
+        }
     }
+    let session = context::piped::session();
+    // Something actually came through (stdin may be /dev/null in scripts).
+    let tee = tee && piped.is_some();
     let request = clean_request(&request);
     let line = args.line.clone().unwrap_or_default();
     let request = if request.is_empty() && !line.trim().is_empty() {
@@ -170,11 +192,19 @@ fn main() -> ExitCode {
                     c.request = "finish or fix this command line".into();
                 }
                 c.request = clean_request(&c.request);
+                if piped.is_some() {
+                    c.piped = piped.clone();
+                }
                 c
             }
             Err(e) => return fail(&args, &e),
         },
-        None => context::gather(&request, &line, context::ShellState::from_env(), &config, &mut timings),
+        None => {
+            let mut c = context::gather(&request, &line, context::ShellState::from_env(), &config, &mut timings);
+            c.earlier_piped = context::piped::earlier(&session);
+            c.piped = piped.clone();
+            c
+        }
     };
     let messages = prompt::build(&context, &config);
     timings.mark("prompt built");
@@ -191,6 +221,16 @@ fn main() -> ExitCode {
         println!("--- about {tokens} tokens; nothing was sent ---");
         timings.print();
         return ExitCode::SUCCESS;
+    }
+
+    if let Some(p) = &piped
+        && args.context_file.is_none()
+    {
+        context::piped::save(&session, p);
+    }
+    let cooking = tee && std::io::stderr().is_terminal();
+    if cooking {
+        eprint!("\x1b[2mbro is cooking…\x1b[0m");
     }
 
     if args.zle {
@@ -220,6 +260,9 @@ fn main() -> ExitCode {
     };
     let result = llm::ask(&messages, &config, &mut progress);
     timings.mark("model answered");
+    if cooking {
+        eprint!("\r\x1b[K");
+    }
     let answer = match result {
         Ok(a) => a,
         Err(e) => {
@@ -232,9 +275,52 @@ fn main() -> ExitCode {
     if args.zle && sent_command.as_deref() != Some(&answer.command) {
         zle_command(&answer.command, danger.is_some());
     }
-    output(&args, &answer, danger.as_deref());
+    if tee {
+        output_after_tee(&session, &request, &answer, danger.as_deref());
+    } else {
+        output(&args, &answer, danger.as_deref());
+    }
     timings.print();
     ExitCode::SUCCESS
+}
+
+/// After `… | bro <request>`: stdout carried the piped text, so the command goes to the next
+/// prompt through the zsh integration (`BRO_SESSION` is set when it's loaded). Without it, the
+/// command follows the text on a terminal, or goes to stderr so a pipe stays clean.
+fn output_after_tee(session: &str, request: &str, answer: &llm::Answer, danger: Option<&str>) {
+    let explanation = explain(answer, danger);
+    let integrated = std::env::var_os("BRO_SESSION").is_some();
+    if integrated && context::piped::write_pending(session, &answer.command, danger.is_some(), &explanation, request) {
+        return;
+    }
+    if std::io::stdout().is_terminal() {
+        println!("{}", answer.command);
+    } else {
+        eprintln!("{}", answer.command);
+    }
+    print_explanation(&explanation, danger.is_some());
+}
+
+fn explain(answer: &llm::Answer, danger: Option<&str>) -> String {
+    match danger {
+        Some(reason) if answer.explanation.is_empty() => format!("⚠ {reason}"),
+        Some(reason) => format!("⚠ {reason}. {}", answer.explanation),
+        None => answer.explanation.clone(),
+    }
+}
+
+fn print_explanation(explanation: &str, dangerous: bool) {
+    if explanation.is_empty() {
+        return;
+    }
+    let stderr = std::io::stderr();
+    let colour = stderr.is_terminal();
+    let mut e = stderr.lock();
+    let _ = match (dangerous, colour) {
+        (true, true) => writeln!(e, "\x1b[31m{explanation}\x1b[0m"),
+        (false, true) => writeln!(e, "\x1b[2m{explanation}\x1b[0m"),
+        _ => writeln!(e, "{explanation}"),
+    };
 }
 
 fn load_config(args: &Args) -> Result<Config, String> {
@@ -260,11 +346,7 @@ fn clean_request(text: &str) -> String {
 }
 
 fn output(args: &Args, answer: &llm::Answer, danger: Option<&str>) {
-    let explanation = match danger {
-        Some(reason) if answer.explanation.is_empty() => format!("⚠ {reason}"),
-        Some(reason) => format!("⚠ {reason}. {}", answer.explanation),
-        None => answer.explanation.clone(),
-    };
+    let explanation = explain(answer, danger);
     if args.zle {
         println!("explanation\t{}", zle_field(&explanation));
         return;
@@ -281,16 +363,7 @@ fn output(args: &Args, answer: &llm::Answer, danger: Option<&str>) {
         return;
     }
     println!("{}", answer.command);
-    if !explanation.is_empty() {
-        let stderr = std::io::stderr();
-        let colour = stderr.is_terminal();
-        let mut e = stderr.lock();
-        let _ = match (danger.is_some(), colour) {
-            (true, true) => writeln!(e, "\x1b[31m{explanation}\x1b[0m"),
-            (false, true) => writeln!(e, "\x1b[2m{explanation}\x1b[0m"),
-            _ => writeln!(e, "{explanation}"),
-        };
-    }
+    print_explanation(&explanation, danger.is_some());
 }
 
 /// The widget reads one record per line: `pid`, `partial`, `command`, `explanation` or `error`, a tab,

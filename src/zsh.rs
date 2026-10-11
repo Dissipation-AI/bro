@@ -8,7 +8,11 @@ const INSTALL_LINE: &str = "eval \"$(bro init zsh)\"";
 /// The widget, with this binary's absolute path and the configured completion key filled in.
 pub fn init_script(config: &Config) -> String {
     let bin = std::env::current_exe().map(|p| p.display().to_string()).unwrap_or_else(|_| "bro".into());
-    SCRIPT.replace("__BRO_BIN__", &shell_quote(&bin)).replace("__BRO_KEY__", &config.complete_key)
+    let pending = crate::config::cache_dir().join("pending");
+    SCRIPT
+        .replace("__BRO_BIN__", &shell_quote(&bin))
+        .replace("__BRO_KEY__", &config.complete_key)
+        .replace("__BRO_PENDING__", &shell_quote(&pending.display().to_string()))
 }
 
 fn shell_quote(s: &str) -> String {
