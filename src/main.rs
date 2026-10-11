@@ -195,6 +195,10 @@ fn main() -> ExitCode {
                 if piped.is_some() {
                     c.piped = piped.clone();
                 }
+                // tldr knowledge is about this machine's tools, so evals look it up here too.
+                if c.tldr.is_none() {
+                    c.tldr = Some(context::tldr::relevant(&c.request, &c.line, context::tldr_limit(&config)));
+                }
                 c
             }
             Err(e) => return fail(&args, &e),

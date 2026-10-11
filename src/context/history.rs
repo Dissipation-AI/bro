@@ -11,7 +11,7 @@ pub fn recent(from_widget: Option<Vec<String>>, last_status: Option<i32>, count:
     let start = commands.len().saturating_sub(count);
     let mut recent: Vec<RecentCommand> = commands[start..]
         .iter()
-        .map(|c| RecentCommand { command: c.trim().to_string(), exit_status: None, output: None })
+        .map(|c| RecentCommand { command: c.trim().to_string(), ..Default::default() })
         .collect();
     if let Some(last) = recent.last_mut() {
         last.exit_status = last_status;

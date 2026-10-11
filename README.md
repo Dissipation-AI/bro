@@ -93,11 +93,18 @@ integration (all three are tested).
 
 | You do | What happens |
 |---|---|
-| Type `bro <what you want>`, press **Enter** | The command appears in your prompt as it streams in, with a one-line explanation under it. |
+| Type `bro <what you want>`, press **Enter** | Your words stay on screen and in your history as a comment (`# bro what you want`), and the command appears in the next prompt as it streams in, with a one-line explanation under it. |
 | Press **Enter** again | The command runs. That's the only way anything runs. |
 | Edit it first | It's an ordinary command line. Change anything. |
 | Press **Ctrl-C** while bro is thinking | Cancels and puts your words back so you can reword them. |
 | Type half a command, press **Ctrl-G** | bro finishes it. No `bro` prefix needed. |
+
+**bro remembers the conversation.** Because each request is left in your history as
+`# bro …`, the next request sees the earlier ones, along with what bro suggested for each and
+what you actually ran. So "no, include hidden files too" or "now do the same for the other
+folder" work, and bro doesn't offer the suggestion you just skipped. It looks at your last 20
+history lines (`recent_commands` in the config). bro turns on zsh's `interactive_comments`
+option so the comment lines are allowed.
 
 The trigger is forgiving: `bro`, `Bro,` `BRO:` and `bro.` all work. Words like `brown` or
 `broadcast` don't trigger it, and lines that don't start with `bro` cost nothing.
@@ -211,7 +218,7 @@ on-device models) and trimmed from the bottom of this list:
 | Your request and the current line | exactly as typed or dictated |
 | Your notes | `~/.config/bro/bro.md`, see [bro.md](#bromd-notes-for-bro) |
 | Anything you pipe in | see [Pipe things into bro](#pipe-things-into-bro) |
-| Your last 3 commands | with exit status, and their **output** when running inside [CTX](#ctx) |
+| Your recent history | the last 20 lines, including your earlier `# bro …` requests and what bro suggested for each; exit status; and the **output** of the last 3 when running inside [CTX](#ctx) |
 | Current folder | path, git branch and short status, the first 50 entries |
 | Open tabs | inside CTX: number, name, folder, what's running |
 | Running processes | top 15 by CPU (averaged since each started) and by memory, plus processes you mentioned by name, plus your shell's jobs |
@@ -221,7 +228,7 @@ on-device models) and trimmed from the bottom of this list:
 | Your projects | git repos and folders under `~`, most relevant first |
 | What you ran before | past requests and the command you actually ran (last 20, most relevant first) |
 | Saved tabs | inside CTX: past sessions matching your request ("how did I deploy last time") |
-| Man pages | for commands you name, trimmed to the options that match your request, so the model uses *this* Mac's BSD flags |
+| Man pages and tldr | for commands you name: the man page trimmed to the options that match your request, so the model uses *this* Mac's BSD flags, plus the best-matching examples from the command's [tldr](https://tldr.sh) pages if a tldr client is installed (`brew install tlrc`) |
 | This Mac | macOS version, CPU architecture, shell, terminal |
 
 Run `bro --show-prompt <request>` to see exactly what would be sent, without sending it.
@@ -306,6 +313,7 @@ search_url = "https://search.brave.com/search?q={query}"   # Brave, Google, Duck
 browser = "default"                # or an app name, e.g. "Firefox"
 complete_key = "^G"                # the "finish this line" key
 history_examples = 20              # past requests sent as examples
+recent_commands = 20               # shell history lines bro sees (earlier `# bro` requests included)
 ```
 
 `bro config --check` sends a tiny request and tells you how long it took.
@@ -394,10 +402,13 @@ Results on an M4 Pro, October 2026:
 
 | Tool and model | All 80 cases | Held-out cases | Typical time per request |
 |---|---|---|---|
-| **bro + Gemini 3.5 Flash-Lite** | **76 / 80** | **30 / 30** | **0.85 s** |
-| bro + apfel (Apple on-device) | 37 / 80 | 6 / 30 | 1.9 s |
+| **bro + Gemini 3.5 Flash-Lite** | **75 / 80**¹ | **29 / 30** | **0.9 s** |
+| bro + apfel (Apple on-device) | 39 / 80 | 11 / 30 | 2.0 s |
 | [Butterfish](https://github.com/bakks/butterfish) + apfel | — | 7 / 20 (the first 20) | — |
 | apfel's own `cmd` | — | 7 / 20 (the first 20) | — |
+
+¹ 71 of the 76 cases that ran; the last 4 hit the free tier's daily quota and passed in every
+earlier run.
 
 The baselines only see the request text, which is the point: most misses there are cases that
 need context ("fix it", "kill that", "open the notes").

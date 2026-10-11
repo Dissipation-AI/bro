@@ -32,6 +32,8 @@ pub struct Config {
     /// The key that sends the current line to bro, in `bindkey` notation.
     pub complete_key: String,
     pub history_examples: usize,
+    /// How many of the latest shell history lines bro sees, including earlier `# bro …` requests.
+    pub recent_commands: usize,
 }
 
 impl Default for Config {
@@ -49,6 +51,7 @@ impl Default for Config {
             browser: "default".into(),
             complete_key: "^G".into(),
             history_examples: 20,
+            recent_commands: 20,
         }
     }
 }

@@ -45,12 +45,8 @@ pub fn load_relevant(words: &[String]) -> Option<Index> {
         start_refresh();
     }
     let index = index?;
-    let wants_browser = words.iter().any(|w| {
-        ["browser", "web", "search", "google", "website", "url", "tab", "safari", "chrome"].contains(&w.as_str())
-    });
     // Everything, most relevant first; the prompt trims each list to its size budget.
-    let apps =
-        by_relevance(&index.apps, |a| super::relevant(a, words) as u8 * 2 + (wants_browser && is_browser(a)) as u8);
+    let apps = by_relevance(&index.apps, |a| super::relevant(a, words) as u8);
     let projects = by_relevance(&index.projects, |p| super::relevant(last_component(p), words) as u8);
     let mut programs: Vec<String> = Vec::new();
     for p in index.projects.iter().filter(|p| super::relevant(last_component(p), words)).take(6) {
@@ -103,26 +99,6 @@ fn expand(path: &str) -> PathBuf {
     }
 }
 
-pub fn is_browser(app: &str) -> bool {
-    [
-        "Safari",
-        "Chrome",
-        "Firefox",
-        "Brave",
-        "Arc",
-        "Edge",
-        "Opera",
-        "Vivaldi",
-        "Orion",
-        "Zen",
-        "Browser",
-        "Chromium",
-        "DuckDuckGo",
-    ]
-    .iter()
-    .any(|b| app.contains(b))
-}
-
 /// Launch a detached refresh unless one started in the last two minutes.
 fn start_refresh() {
     let dir = cache_dir();
@@ -160,6 +136,7 @@ pub fn refresh() -> Result<(), String> {
     let tmp = dir.join("index.json.tmp");
     std::fs::write(&tmp, serde_json::to_vec(&index).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
     std::fs::rename(&tmp, index_path()).map_err(|e| e.to_string())?;
+    super::tldr::refresh();
     let _ = std::fs::remove_file(dir.join("refresh.lock"));
     Ok(())
 }

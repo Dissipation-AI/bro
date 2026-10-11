@@ -62,7 +62,7 @@ fn parse_commands(v: &Value) -> Vec<RecentCommand> {
                     let command = c.get("command")?.as_str()?.to_string();
                     let output = c.get("output").and_then(|o| o.as_str()).map(|o| tail_lines(o, OUTPUT_LINES));
                     let exit_status = c.get("exit_status").and_then(|s| s.as_i64()).map(|s| s as i32);
-                    Some(RecentCommand { command, exit_status, output })
+                    Some(RecentCommand { command, exit_status, output, suggested: None })
                 })
                 .collect()
         })

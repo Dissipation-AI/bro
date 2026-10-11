@@ -12,6 +12,7 @@ pub fn init_script(config: &Config) -> String {
     SCRIPT
         .replace("__BRO_BIN__", &shell_quote(&bin))
         .replace("__BRO_KEY__", &config.complete_key)
+        .replace("__BRO_RECENT__", &config.recent_commands.max(1).to_string())
         .replace("__BRO_PENDING__", &shell_quote(&pending.display().to_string()))
 }
 

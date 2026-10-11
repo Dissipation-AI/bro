@@ -3,7 +3,7 @@
 //!
 //! Pages are located without spawning `man -w` (it takes ~80 ms), rendered once with macOS's
 //! `mandoc`, cached by path and modification time, then trimmed to NAME, SYNOPSIS and the option
-//! entries that best match the request. A `tldr` page is added if one is installed. Commands are
+//! entries that best match the request. Commands are
 //! never run with `--help`.
 
 use crate::config::cache_dir;
@@ -73,12 +73,8 @@ pub fn for_request(request: &str, line: &str) -> Vec<Manual> {
         .filter_map(|cmd| {
             let page = find_page(&cmd)?;
             let rendered = rendered(&page)?;
-            let mut text = excerpt(&rendered, &words, line);
-            if let Some(tldr) = tldr_page(&cmd) {
-                text.push_str("\nExamples (tldr):\n");
-                text.push_str(&tldr);
-            }
-            Some(Manual { command: cmd, text })
+            // tldr examples come separately (context::tldr), matched to the request.
+            Some(Manual { command: cmd, text: excerpt(&rendered, &words, line) })
         })
         .collect()
 }
@@ -343,34 +339,6 @@ fn excerpt(rendered: &str, words: &[String], line: &str) -> String {
         out.push('\n');
     }
     out
-}
-
-/// A tldr page from tealdeer's or the Node client's cache, reduced to its examples.
-fn tldr_page(command: &str) -> Option<String> {
-    let home = crate::config::home();
-    let roots = [
-        home.join("Library/Caches/tealdeer/tldr-pages/pages.en"),
-        home.join("Library/Caches/tealdeer/tldr-pages/pages"),
-        home.join(".cache/tealdeer/tldr-pages/pages.en"),
-        home.join(".tldr/cache/pages"),
-    ];
-    for root in roots {
-        for platform in ["osx", "common"] {
-            if let Ok(text) = std::fs::read_to_string(root.join(platform).join(format!("{command}.md"))) {
-                let mut out = String::new();
-                for l in text.lines() {
-                    let l = l.trim();
-                    if l.starts_with("- ") || l.starts_with('`') {
-                        out.push_str(l.trim_matches('`'));
-                        out.push('\n');
-                    }
-                }
-                out.truncate(800);
-                return Some(out);
-            }
-        }
-    }
-    None
 }
 
 #[cfg(test)]

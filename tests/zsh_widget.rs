@@ -127,8 +127,8 @@ expect {
 }
 send "fc -ln -1\r"
 expect {
-  "bro what's using port 3000?" {}
-  timeout { puts "\nFAIL: request not in history"; exit 1 }
+  -ex {# bro what's using port 3000?} {}
+  timeout { puts "\nFAIL: request not in history as a comment"; exit 1 }
 }
 expect $prompt
 "#;
@@ -484,4 +484,61 @@ send "\025"
 "#;
     let (ok, out) = run_expect("pipe", &server, body);
     assert!(ok, "{out}");
+}
+
+#[test]
+fn requests_stay_in_history_and_later_requests_see_them() {
+    if !available() {
+        return;
+    }
+    let server = serve("ls -la\n# Lists everything.", Duration::ZERO);
+    // A failed command, then two requests. The first sees the failure's exit status (the comment
+    // line doesn't reset it); the second sees the first as `# bro …` with what bro suggested.
+    let body = r#"
+send "false\r"
+expect $prompt
+send "bro fix it\r"
+expect {
+  -ex {# bro fix it} {}
+  timeout { puts "\nFAIL: request not left on screen as a comment"; exit 1 }
+}
+expect {
+  -ex {everything.} {}
+  timeout { puts "\nFAIL: no answer"; exit 1 }
+}
+send "\024"
+expect {
+  -ex {STATE BUFFER=[ls -la]} { sleep 0.3 }
+  timeout { puts "\nFAIL: next prompt not filled"; exit 1 }
+}
+send "\025"
+send "bro no, show hidden files too\r"
+expect {
+  -ex {# bro no, show hidden files too} {}
+  timeout { puts "\nFAIL: second request not left on screen"; exit 1 }
+}
+expect {
+  -ex {everything.} {}
+  timeout { puts "\nFAIL: no second answer"; exit 1 }
+}
+send "\024"
+expect {
+  -ex {STATE BUFFER=[ls -la]} { sleep 0.3 }
+  timeout { puts "\nFAIL: second request not answered"; exit 1 }
+}
+send "\025"
+"#;
+    let (ok, out) = run_expect("comments", &server, body);
+    assert!(ok, "{out}");
+    let requests = server.requests.lock().unwrap();
+    let last_user = |i: usize| -> String {
+        let body: serde_json::Value = serde_json::from_str(&requests[i]).unwrap();
+        body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap().to_string()
+    };
+    let first = last_user(0);
+    assert!(first.contains("$ false\n  exit status 1"), "{first}");
+    assert!(!first.contains("# bro fix it"), "the current request isn't history yet: {first}");
+    let second = last_user(1);
+    assert!(second.contains("$ # bro fix it\n  you suggested: ls -la"), "{second}");
+    assert!(second.ends_with("Request: no, show hidden files too"), "{second}");
 }

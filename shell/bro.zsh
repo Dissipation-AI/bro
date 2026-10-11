@@ -2,7 +2,9 @@
 #
 # Enter on a line starting with `bro` (any case, optional punctuation: `Bro,` `bro.` `BRO:`)
 # sends the rest of the line, verbatim, to bro instead of zsh, so apostrophes, `?` and `!` are
-# fine. The answer replaces the line; nothing runs until you press Enter again.
+# fine. The line itself is entered as a comment (`# bro …`), so it stays on screen and in your
+# history, where later requests can see it. The answer fills the next prompt; nothing runs until
+# you press Enter again.
 # __BRO_KEY__ sends whatever is typed to bro to finish it.
 #
 # `cat file | bro <request>` runs bro as an ordinary command: it shows the piped text (like tee)
@@ -12,11 +14,14 @@
 (( ${+_bro_loaded} )) && return 0
 typeset -g _bro_loaded=1
 zmodload zsh/parameter 2>/dev/null
+# `# bro …` lines are entered as comments, which zsh only allows with this option.
+setopt interactive_comments
 
 typeset -g _bro_bin=__BRO_BIN__
 typeset -g _bro_status=0       # exit status of the last command
 typeset -g _bro_waiting=0      # 1: a suggestion is in the prompt; 2: the next command ran
 typeset -g _bro_req= _bro_sug= _bro_ran=
+typeset -g _bro_asking= _bro_asking_line=   # a request entered as a comment, answered at the next prompt
 typeset -g _bro_pending=__BRO_PENDING__/$$
 # Which terminal session piped output belongs to, and where bro leaves answers for this shell.
 export BRO_SESSION=$$
@@ -24,7 +29,8 @@ export BRO_SESSION=$$
 # Record what was run after a suggestion, and its exit status (learning). In the background.
 _bro_precmd() {
   local st=$?
-  _bro_status=$st
+  # A `# bro …` comment isn't a command: keep the status of the one before it ("fix it").
+  [[ -n $_bro_asking ]] || _bro_status=$st
   if (( _bro_waiting == 2 )); then
     BRO_REC_REQUEST=$_bro_req BRO_REC_SUGGESTED=$_bro_sug BRO_REC_RAN=$_bro_ran BRO_REC_STATUS=$st \
       $_bro_bin --record &!
@@ -70,6 +76,14 @@ _bro_clear() {
 # A new prompt: clear the old explanation, and put in an answer left by `… | bro <request>`.
 _bro_line_init() {
   _bro_clear
+  if [[ -n $_bro_asking ]]; then
+    local request=$_bro_asking
+    # Shown while bro works, and put back if it fails or you press Ctrl-C.
+    BUFFER=$_bro_asking_line CURSOR=$#BUFFER
+    _bro_asking= _bro_asking_line=
+    _bro_ask "$request" ""
+    return 0
+  fi
   [[ -f $_bro_pending ]] || return 0
   local -a rec
   rec=("${(@f)$(<$_bro_pending)}")
@@ -109,7 +123,7 @@ _bro_ask() {
   for k in ${(Onk)history}; do
     [[ -n ${history[$k]//[[:space:]]/} ]] || continue
     recent=("${history[$k]}" $recent)
-    (( $#recent >= 3 )) && break
+    (( $#recent >= __BRO_RECENT__ )) && break
   done
   local original=$BUFFER command= st= explanation= error= record kind rest fd pid= cancelled=0
   setopt local_traps
@@ -181,8 +195,9 @@ _bro_accept_line() {
       return
     fi
     _bro_unused
-    print -rs -- "$BUFFER"
-    _bro_ask "$rest" ""
+    _bro_asking=$rest _bro_asking_line=$BUFFER
+    BUFFER="# ${BUFFER##[[:space:]]#}"
+    zle _bro_orig_accept_line
     return
   fi
   zle _bro_orig_accept_line

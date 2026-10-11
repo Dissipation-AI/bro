@@ -131,6 +131,7 @@ fn system_prompt(config: &Config, c: &Context, last_failed: bool) -> String {
                     "programs" => !c.programs.is_empty(),
                     "learned" => !c.examples.is_empty(),
                     "piped" => c.piped.is_some(),
+                    "asked" => c.recent_commands.iter().any(|r| context::learned::asked(&r.command).is_some()),
                     _ => true,
                 };
                 applies.then(|| rule.to_string())
@@ -324,6 +325,8 @@ struct Limits {
     /// Lines of text piped into this request: it was sent on purpose, so more of it is kept.
     piped_lines: usize,
     outputs_shown: usize,
+    /// History lines shown (the newest).
+    recent: usize,
     processes: usize,
     examples: usize,
     environment: usize,
@@ -340,6 +343,7 @@ impl Limits {
                 output_lines: 20,
                 piped_lines: 60,
                 outputs_shown: 1,
+                recent: 10,
                 processes: 5,
                 examples: 5.min(config.history_examples),
                 environment: 120,
@@ -353,6 +357,7 @@ impl Limits {
                 output_lines: 60,
                 piped_lines: 200,
                 outputs_shown: 3,
+                recent: usize::MAX,
                 processes: 30,
                 examples: config.history_examples,
                 environment: 400,
@@ -397,12 +402,16 @@ fn sections(c: &Context, topics: &Topics, config: &Config) -> Vec<String> {
 
     if !c.recent_commands.is_empty() {
         let mut s = String::from("Commands already run here, oldest first:");
+        let skip = c.recent_commands.len().saturating_sub(limits.recent);
         let first_output = c.recent_commands.len().saturating_sub(limits.outputs_shown);
-        for (i, r) in c.recent_commands.iter().enumerate() {
+        for (i, r) in c.recent_commands.iter().enumerate().skip(skip) {
             s.push_str("\n$ ");
             s.push_str(&r.command.replace('\n', "\n  "));
             if let Some(status) = r.exit_status {
                 s.push_str(&format!("\n  exit status {status}"));
+            }
+            if let Some(suggested) = &r.suggested {
+                s.push_str(&format!("\n  you suggested: {}", suggested.replace('\n', " ")));
             }
             if i >= first_output
                 && let Some(output) = r.output.as_deref().filter(|o| !o.trim().is_empty())
@@ -524,6 +533,13 @@ fn sections(c: &Context, topics: &Topics, config: &Config) -> Vec<String> {
         let mut s = String::from("What this person ran before, most relevant first:");
         for e in c.examples.iter().take(limits.examples) {
             s.push_str(&format!("\n  for \"{}\" they ran: {}", e.request, e.command));
+        }
+        out.push(s);
+    }
+    if let Some(tldr) = c.tldr.as_ref().filter(|t| !t.is_empty()) {
+        let mut s = String::from("Examples from tldr pages for commands on this Mac (adapt names and paths):");
+        for e in tldr {
+            s.push_str(&format!("\n  {} ({}): {}", e.description, e.page, e.command));
         }
         out.push(s);
     }
@@ -729,6 +745,7 @@ mod tests {
             command: "export OPENAI_API_KEY=sk-proj-Qk3vT9xLm2Rp8WzA4bN6cY1dF7gH0jKs".into(),
             exit_status: Some(1),
             output: Some("boom".into()),
+            suggested: None,
         }];
         let m = build(&c, &Config::default());
         let last = m.last().unwrap();

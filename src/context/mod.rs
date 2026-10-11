@@ -13,6 +13,7 @@ pub mod man;
 pub mod piped;
 pub mod processes;
 pub mod system;
+pub mod tldr;
 
 use crate::config::Config;
 use crate::timing::Timings;
@@ -56,6 +57,8 @@ pub struct Context {
     pub examples: Vec<learned::Example>,
     pub saved_tab_commands: Vec<String>,
     pub manuals: Vec<man::Manual>,
+    /// Matching tldr examples for installed commands. `None` in a snapshot means "look them up".
+    pub tldr: Option<Vec<tldr::Example>>,
     pub system: system::System,
 }
 
@@ -74,6 +77,8 @@ pub struct RecentCommand {
     pub exit_status: Option<i32>,
     /// Tail of the output, when known (inside ctx, or in an eval snapshot).
     pub output: Option<String>,
+    /// For an earlier request left in the history as `# bro …`: what bro suggested then.
+    pub suggested: Option<String>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -153,6 +158,7 @@ enum Part {
     Index(index::Index),
     Examples(Vec<learned::Example>),
     Manuals(Vec<man::Manual>),
+    Tldr(Vec<tldr::Example>),
     System(system::System),
 }
 
@@ -182,7 +188,29 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
         let history = shell.history.clone();
         let last_status = shell.last_status;
         expected += 1;
-        spawn("history", &tx, Box::new(move || Some(Part::Recent(history::recent(history, last_status, 3)))));
+        let count = config.recent_commands;
+        let this_request = request.trim().to_string();
+        spawn(
+            "history",
+            &tx,
+            Box::new(move || {
+                let mut recent = history::recent(history, last_status, count + 1);
+                // The widget enters this request as `# bro …` before asking; it isn't history yet.
+                let same = |a: &str| norm(a) == norm(&this_request);
+                if recent.last().and_then(|r| learned::asked(&r.command)).is_some_and(same) {
+                    recent.pop();
+                }
+                // The exit status is the last real command's: `# bro …` comments don't change it.
+                let status = recent.iter_mut().filter_map(|r| r.exit_status.take()).last();
+                if let Some(real) = recent.iter_mut().rev().find(|r| learned::asked(&r.command).is_none()) {
+                    real.exit_status = status.or(last_status);
+                }
+                let start = recent.len().saturating_sub(count);
+                recent.drain(..start);
+                learned::annotate(&mut recent);
+                Some(Part::Recent(recent))
+            }),
+        );
     }
     expected += 1;
     spawn(
@@ -228,6 +256,13 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
         expected += 1;
         spawn("manuals", &tx, Box::new(move || Some(Part::Manuals(man::for_request(&request, &line)))));
     }
+    {
+        let request = request.to_string();
+        let line = line.to_string();
+        let limit = tldr_limit(config);
+        expected += 1;
+        spawn("tldr", &tx, Box::new(move || Some(Part::Tldr(tldr::relevant(&request, &line, limit)))));
+    }
     expected += 1;
     spawn("system", &tx, Box::new(|| Some(Part::System(system::read()))));
     drop(tx);
@@ -245,6 +280,7 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
     let deadline = started + SOURCE_TIME_LIMIT;
     // The status may arrive before the branch.
     let mut pending_status = None;
+    let mut ctx_commands: Vec<RecentCommand> = Vec::new();
     let mut received = 0;
     while received < expected {
         let now = Instant::now();
@@ -257,12 +293,7 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
                 timings.record(name, took);
                 let Some(part) = part else { continue };
                 match part {
-                    Part::Recent(r) => {
-                        // ctx's records (with output) win over plain shell history.
-                        if context.recent_commands.is_empty() {
-                            context.recent_commands = r;
-                        }
-                    }
+                    Part::Recent(r) => context.recent_commands = r,
                     Part::Folder(folder, files, total) => {
                         context.folder = folder;
                         context.files = files;
@@ -274,9 +305,7 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
                         None => pending_status = Some(status),
                     },
                     Part::Ctx(c) => {
-                        if !c.recent_commands.is_empty() {
-                            context.recent_commands = c.recent_commands;
-                        }
+                        ctx_commands = c.recent_commands;
                         context.tabs = c.tabs;
                         context.saved_tab_commands = c.saved_tab_commands;
                     }
@@ -289,6 +318,7 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
                     }
                     Part::Examples(e) => context.examples = e,
                     Part::Manuals(m) => context.manuals = m,
+                    Part::Tldr(t) => context.tldr = Some(t),
                     Part::System(s) => context.system = s,
                 }
             }
@@ -297,8 +327,38 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
         }
     }
     stop_git.store(true, Ordering::Relaxed);
+    merge_ctx_commands(&mut context.recent_commands, ctx_commands);
     timings.mark("sources done");
     context
+}
+
+/// For comparing requests: case, surrounding space and final punctuation don't matter.
+fn norm(text: &str) -> String {
+    text.trim().trim_end_matches(['.', '!', '?']).trim().to_lowercase()
+}
+
+/// ctx knows the output and exit status of the last few commands; the shell history knows more
+/// lines. Attach ctx's details to the matching history lines, and add any the history lacks.
+fn merge_ctx_commands(history: &mut Vec<RecentCommand>, from_ctx: Vec<RecentCommand>) {
+    let mut search_end = history.len();
+    let mut extra = Vec::new();
+    for c in from_ctx.into_iter().rev() {
+        match history[..search_end].iter().rposition(|h| h.command == c.command) {
+            Some(i) => {
+                history[i].output = c.output;
+                history[i].exit_status = c.exit_status.or(history[i].exit_status);
+                search_end = i;
+            }
+            None => extra.push(c),
+        }
+    }
+    extra.reverse();
+    history.extend(extra);
+}
+
+/// How many tldr examples a request gets.
+pub fn tldr_limit(config: &Config) -> usize {
+    if config.small() { 3 } else { 6 }
 }
 
 /// Environment variable names, with values only where the redaction rules allow.

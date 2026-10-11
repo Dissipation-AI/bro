@@ -70,6 +70,33 @@ fn read_records() -> Vec<Record> {
     text.lines().filter_map(|l| serde_json::from_str(l).ok()).collect()
 }
 
+/// The request in a history line left by the widget (`# bro find big files`), if it is one.
+pub fn asked(command: &str) -> Option<&str> {
+    let rest = command.trim().strip_prefix('#')?.trim_start();
+    let lower = rest.get(..3)?.to_ascii_lowercase();
+    let after = rest.get(3..)?;
+    (lower == "bro" && after.chars().next().is_none_or(|c| c.is_whitespace() || c.is_ascii_punctuation()))
+        .then(|| after.trim_start_matches(|c: char| c.is_ascii_punctuation()).trim())
+}
+
+/// Next to each earlier request in the history, what bro suggested for it (newest record).
+pub fn annotate(recent: &mut [super::RecentCommand]) {
+    if !recent.iter().any(|r| asked(&r.command).is_some()) {
+        return;
+    }
+    let records = read_records();
+    for r in recent.iter_mut() {
+        let Some(request) = asked(&r.command) else { continue };
+        let request = redact::redact(request).to_lowercase();
+        r.suggested = records
+            .iter()
+            .rev()
+            .find(|rec| rec.request.trim().to_lowercase() == request)
+            .map(|rec| rec.suggested.clone())
+            .filter(|s| !s.is_empty());
+    }
+}
+
 /// Turn records into (request → command that worked) pairs, oldest first.
 pub fn examples_from(records: &[Record]) -> Vec<Example> {
     let mut examples = Vec::new();
