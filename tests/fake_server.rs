@@ -43,7 +43,25 @@ fn plain_mode_prints_command_and_explanation() {
     assert_eq!(body["response_format"]["json_schema"]["schema"]["required"][0], "command");
     let last = body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap().to_string();
     assert!(last.ends_with("Request: list files newest first"), "{last}");
-    assert!(last.contains("Files here: notes.txt"), "{last}");
+    // No `tree` in the test PATH, so the folder is shown with `find`.
+    assert!(last.contains("$ find . -maxdepth 2 -not -path '*/.*'\n.\n./notes.txt\nRequest:"), "{last}");
+}
+
+#[test]
+fn config_check_sends_its_test_request() {
+    let server = serve(&answer("ls -lt", "Lists files, newest first."), Duration::ZERO);
+    let sb = Sandbox::new("check", &server.url);
+    let mut c = sb.command();
+    c.args(["config", "--check"]);
+    let o = run(c);
+    assert!(o.status.success(), "{}", stderr(&o));
+    assert!(stdout(&o).contains("Answer in "), "{}", stdout(&o));
+    let requests = server.requests.lock().unwrap();
+    assert!(
+        requests[0].contains("Request: list the files in this folder, newest first"),
+        "not sent as a request: {}",
+        requests[0]
+    );
 }
 
 #[test]
@@ -267,8 +285,11 @@ fn piped_text_passes_through_and_is_remembered() {
     assert!(stderr(&o).starts_with("sed -i ''"), "{}", stderr(&o));
 
     let first = request_text(&server, 0);
-    assert!(first.contains("Piped into bro, the output of `cat ~/.config/bro/config.toml`:"), "{first}");
-    assert!(first.contains("search.brave.com"), "{first}");
+    assert!(
+        first.contains("$ cat ~/.config/bro/config.toml | bro\nsearch_url = \"https://search.brave.com"),
+        "{first}"
+    );
+    assert!(first.ends_with("\nRequest: set the web search to google"), "{first}");
     assert!(!first.contains("sk-proj-Qk3vT9"), "redacted: {first}");
 
     // A later request in the same session sees it, redacted on disk too.
@@ -276,8 +297,8 @@ fn piped_text_passes_through_and_is_remembered() {
     c.args(["now", "open", "the", "config"]);
     run(c);
     let second = request_text(&server, 1);
-    assert!(second.contains("Output piped into bro earlier in this terminal"), "{second}");
-    assert!(second.contains("$ cat ~/.config/bro/config.toml | bro"), "{second}");
+    assert!(second.contains("$ cat ~/.config/bro/config.toml | bro\nsearch_url = "), "{second}");
+    assert!(second.ends_with("\nRequest: now open the config"), "{second}");
     let saved = std::fs::read_dir(sb.home.join("Library/Caches/bro/piped")).unwrap().flatten().next().unwrap();
     assert!(!std::fs::read_to_string(saved.path()).unwrap().contains("sk-proj-Qk3vT9"));
 }
@@ -297,7 +318,7 @@ fn piped_answer_goes_to_the_next_prompt_with_the_integration() {
 }
 
 #[test]
-fn bro_md_is_part_of_the_instructions() {
+fn bro_md_is_shown_and_followed() {
     let server = serve(&answer("ssh lab-gpu", "Connects to the GPU box."), Duration::ZERO);
     let sb = Sandbox::new("bromd", &server.url);
     std::fs::write(sb.home.join(".config/bro/bro.md"), "- My GPU box is `ssh lab-gpu`.\n").unwrap();
@@ -307,6 +328,12 @@ fn bro_md_is_part_of_the_instructions() {
     assert_eq!(stdout(&o), "ssh lab-gpu\n");
     let requests = server.requests.lock().unwrap();
     let body: serde_json::Value = serde_json::from_str(&requests[0]).unwrap();
-    let system = body["messages"][0]["content"].as_str().unwrap();
-    assert!(system.contains("- My GPU box is `ssh lab-gpu`."), "{system}");
+    let messages = body["messages"].as_array().unwrap();
+    let system = messages[0]["content"].as_str().unwrap();
+    assert!(system.contains("bro.md is this person's notes for you. Follow them."), "{system}");
+    let last = messages.last().unwrap()["content"].as_str().unwrap();
+    assert!(
+        last.contains("This person's notes for you (~/.config/bro/bro.md):\n- My GPU box is `ssh lab-gpu`."),
+        "{last}"
+    );
 }

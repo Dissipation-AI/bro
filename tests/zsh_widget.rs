@@ -127,8 +127,8 @@ expect {
 }
 send "fc -ln -1\r"
 expect {
-  -ex {# bro what's using port 3000?} {}
-  timeout { puts "\nFAIL: request not in history as a comment"; exit 1 }
+  -re {\nbro what's using port 3000\?\r} {}
+  timeout { puts "\nFAIL: request not in history as typed"; exit 1 }
 }
 expect $prompt
 "#;
@@ -492,15 +492,15 @@ fn requests_stay_in_history_and_later_requests_see_them() {
         return;
     }
     let server = serve("ls -la\n# Lists everything.", Duration::ZERO);
-    // A failed command, then two requests. The first sees the failure's exit status (the comment
-    // line doesn't reset it); the second sees the first as `# bro …` with what bro suggested.
+    // A failed command, then two requests. The first sees the failure's exit status (the request
+    // isn't run, so it doesn't reset it); the second sees the first, with what bro suggested.
     let body = r#"
 send "false\r"
 expect $prompt
 send "bro fix it\r"
 expect {
-  -ex {# bro fix it} {}
-  timeout { puts "\nFAIL: request not left on screen as a comment"; exit 1 }
+  -ex {bro fix it} {}
+  timeout { puts "\nFAIL: request not left on screen"; exit 1 }
 }
 expect {
   -ex {everything.} {}
@@ -514,7 +514,7 @@ expect {
 send "\025"
 send "bro no, show hidden files too\r"
 expect {
-  -ex {# bro no, show hidden files too} {}
+  -ex {bro no, show hidden files too} {}
   timeout { puts "\nFAIL: second request not left on screen"; exit 1 }
 }
 expect {
@@ -531,14 +531,19 @@ send "\025"
     let (ok, out) = run_expect("comments", &server, body);
     assert!(ok, "{out}");
     let requests = server.requests.lock().unwrap();
-    let last_user = |i: usize| -> String {
+    let messages = |i: usize| -> Vec<(String, String)> {
         let body: serde_json::Value = serde_json::from_str(&requests[i]).unwrap();
-        body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap().to_string()
+        let m = body["messages"].as_array().unwrap().iter();
+        m.map(|m| (m["role"].as_str().unwrap().to_string(), m["content"].as_str().unwrap().to_string())).collect()
     };
-    let first = last_user(0);
-    assert!(first.contains("$ false\n  exit status 1"), "{first}");
-    assert!(!first.contains("# bro fix it"), "the current request isn't history yet: {first}");
-    let second = last_user(1);
-    assert!(second.contains("$ # bro fix it\n  you suggested: ls -la"), "{second}");
-    assert!(second.ends_with("Request: no, show hidden files too"), "{second}");
+    let first = messages(0).pop().unwrap().1;
+    assert!(first.ends_with("$ false\nzsh: exit 1\nRequest: fix it"), "{first}");
+    assert!(!first.contains("bro fix it"), "the current request isn't history yet: {first}");
+    // The first request and bro's answer are a turn of their own before the second.
+    let second = messages(1);
+    let n = second.len();
+    assert!(second[n - 3].1.ends_with("$ false\nzsh: exit 1\nRequest: fix it"), "{second:?}");
+    assert_eq!(second[n - 2].0, "assistant");
+    assert!(second[n - 2].1.contains("\"command\": \"ls -la\""), "{second:?}");
+    assert_eq!(second[n - 1].1, "Request: no, show hidden files too");
 }

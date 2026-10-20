@@ -4,47 +4,98 @@
 # the prompt can't explain in words, and keep its specifics unlike any eval case, so the evals
 # measure the behaviour rather than recall.
 #
-# The few most similar to a request (by shared words, and by the kinds of context present) are
-# shown before it. `{search:words}` becomes the configured search URL for those words.
+# Each is a short terminal session in the same form as the real one (prompt.rs): machine facts
+# are written as the command that shows them and get the same plain labels (`$ ctx list tabs`
+# becomes `Open tabs:`), and the request comes last as `Request: …`. The few most similar to a request (by shared words, and by
+# `shapes`: the kinds of context present) are shown before it. `{search:words}` becomes the
+# configured search URL for those words.
 
-# A process the person describes: use its name and pid from the context.
+# A process the person describes: use its name and pid from the session.
 [[example]]
-context = "Running processes (for reference; only act on one if asked):\n  Slack (pid 2210) cpu 0.4%, memory 380 MB\n  Slack Helper (pid 2214) cpu 1.2%, memory 210 MB"
+shapes = ["processes"]
+session = """
+$ ps -Ao pid,%cpu,rss,comm -m | head -n 3
+  PID  %CPU      RSS COMM
+ 2210   0.4   389120 Slack
+ 2214   1.2   215040 Slack Helper"""
 request = "close slack it's frozen"
 command = "pkill -i slack"
 explanation = "Stops every process whose name contains slack."
 
 # The last command failed: fix it from its output.
 [[example]]
-context = "Commands already run here, oldest first:\n$ git push\n  exit status 128\n  output:\n    fatal: The current branch feature/login has no upstream branch.\n    To push the current branch and set the remote as upstream, use\n\n        git push --set-upstream origin feature/login"
+shapes = ["failed"]
+folder = "~/code/login"
+session = """
+$ git push
+fatal: The current branch feature/login has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin feature/login
+
+zsh: exit 128"""
 request = "fix it"
 command = "git push --set-upstream origin feature/login"
 explanation = "Pushes feature/login and sets its upstream on origin."
 
 # A half-typed command: keep what was typed and finish it.
 [[example]]
-line = "tar -czf backup.tgz but leave out the node"
+shapes = ["line"]
+folder = "~/code/site"
 request = "finish or fix this command line"
+line = "tar -czf backup.tgz but leave out the node"
 command = "tar --exclude=node_modules -czf backup.tgz ."
 explanation = "Archives this folder into backup.tgz, skipping node_modules."
 
 # "There", "that one": earlier commands say where.
 [[example]]
-context = "Commands already run here, oldest first:\n$ ssh admin@10.0.4.12\n  exit status 0"
+session = """
+$ ssh admin@10.0.4.12
+Connection to 10.0.4.12 closed."""
 request = "how long has that machine been up"
 command = "ssh admin@10.0.4.12 uptime"
 explanation = "Shows the uptime of 10.0.4.12."
 
 # Needs to see a file first: show it, piped into bro with the request.
 [[example]]
-context = "Current folder: ~/infra\nFiles here: deploy.yaml, README.md"
+folder = "~/infra"
+session = """
+$ pwd
+~/infra
+$ tree -F -L 2
+.
+├── README.md
+└── deploy.yaml"""
 request = "bump the image tag in deploy.yaml to 2.1"
 command = "cat deploy.yaml | bro bump the image tag to 2.1"
 explanation = "Shows deploy.yaml so bro can write the edit."
 
-# Text piped in: answer from it.
+# The second half of a look-first: bro asked to see the file, and now it's piped in with the
+# request. Answer from what's there.
 [[example]]
-context = "Piped into bro, the output of `docker ps`:\n    CONTAINER ID   IMAGE      COMMAND                  STATUS\n    4f2a9c1b7e3d   redis:7    \"docker-entrypoint.s…\"   Up 2 hours\n    9b81e0c2d4aa   postgres   \"docker-entrypoint.s…\"   Up 2 hours"
+shapes = ["piped"]
+folder = "~/infra"
+earlier_request = "bump the image tag in deploy.yaml to 2.1"
+earlier_command = "cat deploy.yaml | bro bump the image tag to 2.1"
+earlier_explanation = "Shows deploy.yaml so bro can write the edit."
+piped_command = "cat deploy.yaml"
+piped = """
+services:
+  api:
+    image: registry.example.com/api:2.0
+    ports: ["8000:8000"]"""
+request = "bump the image tag to 2.1"
+command = "sed -i '' 's|registry.example.com/api:2.0|registry.example.com/api:2.1|' deploy.yaml"
+explanation = "Changes the api image tag from 2.0 to 2.1."
+
+# Text piped in: answer from it. (The piped text comes just before the request, as bro shows it.)
+[[example]]
+shapes = ["piped"]
+piped_command = "docker ps"
+piped = """
+CONTAINER ID   IMAGE      COMMAND                  STATUS
+4f2a9c1b7e3d   redis:7    "docker-entrypoint.s…"   Up 2 hours
+9b81e0c2d4aa   postgres   "docker-entrypoint.s…"   Up 2 hours"""
 request = "stop the redis one"
 command = "docker stop 4f2a9c1b7e3d"
 explanation = "Stops the redis container."
@@ -57,21 +108,39 @@ explanation = "Opens a web search for sourdough starter recipes."
 
 # An open terminal tab (in CTX): bring it to the front by name.
 [[example]]
-context = "Open tabs:\n  tab 12 \"API server\" in ~/code/api, running npm run dev\n  tab 15 \"Notes\" in ~"
+shapes = ["tabs"]
+session = """
+$ ctx list tabs
+  tab 12 "API server" at ~/code/api — busy: npm run dev
+  tab 15 "Notes" at ~ — idle"""
 request = "take me to the terminal running my api"
 command = "ctx show \"API server\""
 explanation = "Brings the API server tab to the front."
 
-# A project and an app from the context.
+# A project and an app from the session.
 [[example]]
-context = "Apps: Visual Studio Code\nProject folders: ~/code/blog"
+session = """
+$ ls -m /Applications
+Safari.app, Visual Studio Code.app
+$ tree -F -L 3 ~
+~
+└── code/
+    └── blog/"""
 request = "open my blog project in vs code"
 command = "open -a \"Visual Studio Code\" ~/code/blog"
 explanation = "Opens the blog folder in Visual Studio Code."
 
 # One of the person's own programs: run it by its path.
 [[example]]
-context = "Programs you can run: ~/tools/backup/bin/backup-now, ~/tools/backup/setup.sh\nProject folders: ~/tools/backup"
+shapes = ["programs"]
+session = """
+$ tree -F -L 3 ~
+~
+└── tools/
+    └── backup/
+        ├── bin/
+        │   └── backup-now*
+        └── setup.sh*"""
 request = "start my backup tool"
 command = "~/tools/backup/bin/backup-now"
 explanation = "Runs your backup-now program."

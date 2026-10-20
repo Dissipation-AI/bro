@@ -32,7 +32,7 @@ pub struct Config {
     /// The key that sends the current line to bro, in `bindkey` notation.
     pub complete_key: String,
     pub history_examples: usize,
-    /// How many of the latest shell history lines bro sees, including earlier `# bro …` requests.
+    /// How many of the latest shell history lines bro sees, including earlier `bro …` requests.
     pub recent_commands: usize,
 }
 

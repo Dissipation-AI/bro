@@ -14,7 +14,7 @@
 #   butterfish  `butterfish gencmd`, pointed at --endpoint (needs evals/model-proxy.py for apfel)
 #
 # --pause waits between cases, for rate-limited cloud endpoints (Gemini's free tier); a case
-# that gets a 429 or 503 is retried up to three times.
+# that gets a 429 or 503, or loses its connection, is retried up to three times.
 #
 # Results are appended to evals/results/<tool>.tsv so they can be compared over time.
 # Needs jq and perl (both ship with macOS 15+).
@@ -73,6 +73,7 @@ for case in "$@"; do
         command=$(printf '%s' "$out" | jq -r '.command // ("ERROR: " + (.error // "no output"))' 2>/dev/null || echo "ERROR: $out")
         case $command in
           "ERROR: the model server answered 429"*|"ERROR: the model server answered 503"*) sleep $((attempt * 20)) ;;
+          "ERROR: can't connect"*|"ERROR: can't reach"*|"ERROR: lost the connection"*) sleep $((attempt * 5)) ;;
           *) break ;;
         esac
       done

@@ -281,6 +281,8 @@ fn simple_danger(cmd: &Simple, cwd: &Path) -> Option<String> {
     }
     let mut words: Vec<&str> =
         cmd.words.iter().map(String::as_str).skip_while(|w| w.contains('=') && !w.starts_with('-')).collect();
+    // Run once per input line (`… | xargs rm`): it acts on everything piped in.
+    let mut per_input = false;
     loop {
         let first = words.first().map(|w| program(w))?;
         match first {
@@ -292,6 +294,7 @@ fn simple_danger(cmd: &Simple, cwd: &Path) -> Option<String> {
                 }
             }
             "xargs" => {
+                per_input = true;
                 words.remove(0);
                 // Skip xargs's own options (some take a value).
                 while let Some(w) = words.first() {
@@ -321,6 +324,12 @@ fn simple_danger(cmd: &Simple, cwd: &Path) -> Option<String> {
             }
             if args.iter().any(|a| matches!(*a, "/" | "~" | "~/" | "*" | "/*" | ".")) {
                 return Some("deletes files broadly".into());
+            }
+            if per_input {
+                return Some("deletes every file piped into it".into());
+            }
+            if args.iter().any(|a| !a.starts_with('-') && a.contains(['*', '?'])) {
+                return Some("deletes every file matching a pattern".into());
             }
         }
         "srm" | "shred" | "truncate" => return Some("destroys file contents".into()),
@@ -386,6 +395,9 @@ fn simple_danger(cmd: &Simple, cwd: &Path) -> Option<String> {
                     .take_while(|a| !matches!(**a, ";" | "+" | "\\;"))
                     .map(|s| s.to_string())
                     .collect();
+                if inner.first().is_some_and(|w| program(w) == "rm") {
+                    return Some("deletes every file find matches".into());
+                }
                 if let Some(r) = simple_danger(&Simple { words: inner, overwrites: vec![] }, cwd) {
                     return Some(r);
                 }
@@ -504,6 +516,11 @@ mod tests {
             "find . -name node_modules -type d -prune -exec rm -rf {} +",
             "find . -name '*.log' -delete",
             "find . -name node_modules | xargs rm -rf",
+            "find . -name '*.log' -exec rm -f {} +",
+            "find . -name '*.log' -exec rm {} \\;",
+            "find . -name '*.log' | xargs rm",
+            "rm *.log",
+            "rm -f build/*.o",
             "ls; rm -rf /tmp/x",
             "cd x && rm -rf *",
             "FOO=1 sudo make install",

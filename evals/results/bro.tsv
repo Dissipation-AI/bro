@@ -1397,3 +1397,177 @@
 2026-10-11T11:37:21	bro gemini-3.5-flash-lite	uptime	PASS	798	uptime
 2026-10-11T11:37:21	bro gemini-3.5-flash-lite	weather-voice	PASS	900	curl wttr.in
 2026-10-11T11:37:21	bro gemini-3.5-flash-lite	whoami	PASS	917	echo $USER
+2026-10-20T14:52:23	bro	biggest-files	PASS	4750	find . -type f -exec du -h {} + | sort -hr | head -n 5
+2026-10-20T14:52:23	bro	brew-install-complete	PASS	903	brew install jq
+2026-10-20T14:52:23	bro	brew-list	PASS	1088	brew list
+2026-10-20T14:52:23	bro	bro-own-search	FAIL	1031	echo '- search_url = "https://www.google.com/search?q={query}"' >> ~/.config/bro/config.toml
+2026-10-20T14:52:23	bro	bsd-sed	PASS	938	sed -i '' 's/foo/bar/g' config.yml
+2026-10-20T14:52:23	bro	cd-back	FAIL	987	cd ..
+2026-10-20T14:52:23	bro	cd-home	PASS	871	cd ~
+2026-10-20T14:52:23	bro	changed-today	PASS	1094	git diff --name-only
+2026-10-20T14:52:23	bro	claude-tab	PASS	935	ctx show "Claude - auth refactor"
+2026-10-20T14:52:23	bro	copy-folder	PASS	972	cp -r src src-backup
+2026-10-20T14:52:23	bro	copy-path	PASS	1059	pwd | pbcopy
+2026-10-20T14:52:23	bro	count-lines	PASS	999	find src -type f | xargs wc -l
+2026-10-20T14:52:23	bro	cpu-hog	PASS	988	kill 4242
+2026-10-20T14:52:23	bro	delete-logs-complete	PASS	920	find . -name '*.log' -delete
+2026-10-20T14:52:23	bro	delete-node-modules	PASS	895	find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
+2026-10-20T14:52:23	bro	dev-python-version	FAIL	923	python -c "import sys; print(sys.executable)"
+2026-10-20T14:52:23	bro	dev-server-tab-voice	PASS	942	ctx show "Dev server"
+2026-10-20T14:52:23	bro	disk-space	PASS	1040	df -h .
+2026-10-20T14:52:23	bro	docker-rm-complete	PASS	1236	docker run --rm -it ubuntu
+2026-10-20T14:52:23	bro	ds-conda-env	PASS	957	conda activate ml
+2026-10-20T14:52:23	bro	ds-csv-columns	PASS	1336	head -n 1 sales.csv
+2026-10-20T14:52:23	bro	ds-json-to-csv	PASS	1268	jq -r '(.[0] | keys_unsorted), (.[] | map(.)) | @csv' results.json > results.csv
+2026-10-20T14:52:23	bro	ds-notebook	PASS	837	jupyter notebook
+2026-10-20T14:52:23	bro	env-vars	PASS	815	env
+2026-10-20T14:52:23	bro	explore-readme-typo	FAIL	714	vim README.md
+2026-10-20T14:52:23	bro	ffmpeg-complete	PASS	1319	ffmpeg -i talk.mov -c copy talk.mp4
+2026-10-20T14:52:23	bro	file-sizes	PASS	961	du -sh *
+2026-10-20T14:52:23	bro	find-ctx-tab	PASS	952	ctx show "CTX spec writing"
+2026-10-20T14:52:23	bro	fix-git-identity	PASS	1195	git config user.name "Sam" && git config user.email "sam@example.com" && git commit -m "first"
+2026-10-20T14:52:23	bro	fix-python-module	PASS	923	pip install -r requirements.txt
+2026-10-20T14:52:23	bro	fix-vite-missing	PASS	1071	npm install
+2026-10-20T14:52:23	bro	folder-size	PASS	4085	du -sh .
+2026-10-20T14:52:23	bro	folder-sizes-sorted	PASS	2735	du -sh * | sort -hr
+2026-10-20T14:52:23	bro	follow-log	PASS	975	tail -f server.log
+2026-10-20T14:52:23	bro	followup-fix-your-command	PASS	997	du -sh ~/*
+2026-10-20T14:52:23	bro	followup-hidden-too	PASS	1018	ls -a
+2026-10-20T14:52:23	bro	force-push	PASS	943	git push --force
+2026-10-20T14:52:23	bro	git-blame-line	PASS	950	git blame -L 40,40 app.py
+2026-10-20T14:52:23	bro	git-branch-question	PASS	991	git branch --show-current
+2026-10-20T14:52:23	bro	git-remote	PASS	968	git remote get-url origin
+2026-10-20T14:52:23	bro	grep-todo	PASS	939	grep -rn "TODO" src
+2026-10-20T14:52:23	bro	hidden-files	PASS	1008	ls -la
+2026-10-20T14:52:23	bro	home-space	FAIL	935	du -sh ~/*(D)
+2026-10-20T14:52:23	bro	kill-ghostty	PASS	965	kill 812
+2026-10-20T14:52:23	bro	kill-node	PASS	935	kill 4120
+2026-10-20T14:52:23	bro	kill-safari	PASS	1037	kill -9 3001
+2026-10-20T14:52:23	bro	learned-notes	FAIL	944	code ~/notes
+2026-10-20T14:52:23	bro	mkdir-and-enter	PASS	917	mkdir drafts && cd drafts
+2026-10-20T14:52:23	bro	my-ip	PASS	938	curl ifconfig.me
+2026-10-20T14:52:23	bro	new-branch	PASS	951	git checkout -b feature/search
+2026-10-20T14:52:23	bro	node-version	PASS	909	node -v
+2026-10-20T14:52:23	bro	notes-gpu-host	PASS	1119	ssh lab-gpu
+2026-10-20T14:52:23	bro	notes-uv	PASS	925	uv add requests
+2026-10-20T14:52:23	bro	open-in-finder	PASS	980	open .
+2026-10-20T14:52:23	bro	open-spotify	PASS	1066	open -a Spotify
+2026-10-20T14:52:23	bro	piped-bro-config	PASS	1788	sed -i '' 's|search_url = .*|search_url = "https://www.google.com/search?q={query}"|' ~/.config/bro/config.toml
+2026-10-20T14:52:23	bro	piped-kill-vite	PASS	1118	kill 5120
+2026-10-20T14:52:23	bro	png-to-jpg	PASS	883	sips -s format jpeg logo.png --out logo.jpg
+2026-10-20T14:52:23	bro	port-3000	PASS	922	lsof -i :3000
+2026-10-20T14:52:23	bro	project-in-cursor	PASS	1025	open -a "Cursor" ~/Workspaces/charles-terminal-experience/bro
+2026-10-20T14:52:23	bro	readme-textedit	PASS	965	open -a TextEdit README.md
+2026-10-20T14:52:23	bro	real-ctx-app-pid	PASS	944	pgrep -i ctx
+2026-10-20T14:52:23	bro	real-du-fix-it	PASS	1038	du -sh ~/*
+2026-10-20T14:52:23	bro	real-no-most-space	PASS	1048	du -sh ~/*(D) | sort -hr
+2026-10-20T14:52:23	bro	real-search-back-to-brave	PASS	999	sed -i '' 's|search_url = "https://www.google.com/search?q={query}"|search_url = "https://search.brave.com/search?q={query}"|' ~/.config/bro/config.toml
+2026-10-20T14:52:23	bro	real-whoops-commit	PASS	1023	git commit --amend -m 'added ctx-app submodule'
+2026-10-20T14:52:23	bro	rebase-keep-mine	FAIL	774	git rebase --onto main
+2026-10-20T14:52:23	bro	remember-staging	PASS	1022	echo '- my staging server is 10.20.0.8' >> ~/.config/bro/bro.md
+2026-10-20T14:52:23	bro	remote-disk	PASS	873	ssh deploy@203.0.113.5 "df -h"
+2026-10-20T14:52:23	bro	remote-ssh-host	PASS	1041	ssh gpu-box
+2026-10-20T14:52:23	bro	rename-jpeg	PASS	1081	for f in *.jpeg; do mv "$f" " ; ${f%.jpeg}.jpg"; done
+2026-10-20T14:52:23	bro	research-arxiv	PASS	1583	open "https://search.brave.com/search?q=arxiv+papers+about+diffusion+models"
+2026-10-20T14:52:23	bro	research-wordcount	PASS	1017	wc -w thesis.md
+2026-10-20T14:52:23	bro	salsa-voice	PASS	1298	open "https://search.brave.com/search?q=videos+about+salsa+dancing"
+2026-10-20T14:52:23	bro	show-ports	PASS	1400	lsof -i -P -n | grep LISTEN
+2026-10-20T14:52:23	bro	stop-port-8080	FAIL	940	lsof -i :8080 | awk 'NR>1 {print $2}' | xargs kill
+2026-10-20T14:52:23	bro	sysadmin-agent	PASS	1017	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-20T14:52:23	bro	tail-log	PASS	877	tail -n 50 server.log
+2026-10-20T14:52:23	bro	undo-commit	PASS	969	git reset --soft HEAD^
+2026-10-20T14:52:23	bro	unzip-into	PASS	974	unzip archive.zip -d out
+2026-10-20T14:52:23	bro	uptime	PASS	726	uptime
+2026-10-20T14:52:23	bro	weather-voice	PASS	1367	curl wttr.in
+2026-10-20T14:52:23	bro	whoami	PASS	1256	echo $USER
+2026-10-20T14:52:23	bro	why-cargo-failed	PASS	999	cargo add serde
+2026-10-20T14:52:23	bro	wipe-changes	PASS	942	git reset --hard
+2026-10-20T14:52:23	bro	youtube-voice	PASS	959	open "https://www.youtube.com"
+2026-10-20T14:52:23	bro	zip-src	PASS	940	zip -r src.zip src
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	biggest-files	FAIL	2797	ls -la +%size -1 | sort -nr | head -5
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	brew-install-complete	FAIL	2091	brew install json
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	brew-list	PASS	1651	brew list
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	bro-own-search	FAIL	2416	echo -e "search_url=https://www.google.com" >> ~/.config/bro/config.toml
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	bsd-sed	PASS	1937	sed -i '' 's/foo/bar/' config.yml
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	cd-back	FAIL	1826	cd ..
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	cd-home	PASS	1756	cd ~/
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	changed-today	PASS	3744	git status --porcelain --path-spec-order | grep -v "README.md" | grep -v "config.yml" | grep -v "node_modules" | grep -v "package-lock.json" | grep -v "package.json" | grep -v "public" | grep -v "src" | grep -v "vite.config.js"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	claude-tab	PASS	1914	ctx show "Claude - auth refactor"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	copy-folder	FAIL	2107	mkdir src-backup && mv src/* src-backup/
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	copy-path	FAIL	1968	xclip -selection clipboard ~/code/site
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	count-lines	FAIL	2177	wc -l ~/code/site/src/*
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	cpu-hog	PASS	1747	kill -9 4242
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	delete-logs-complete	PASS	2295	find . -name '*.log' -exec rm -f {} +
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	delete-node-modules	PASS	2562	find . -name "node_modules" -type d -exec rm -rf {} +
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	dev-python-version	FAIL	2110	cat pyproject.toml | bro show python_version
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	dev-server-tab-voice	PASS	1857	ctx show "Dev server"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	disk-space	PASS	1926	df -h ~
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	docker-rm-complete	PASS	2497	docker run --rm -it ubuntu
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	ds-conda-env	FAIL	1766	source ~/.config/bro/config.toml
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	ds-csv-columns	FAIL	2268	head -n 1 sales.csv | grep -v "ID" | grep -o ''
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	ds-json-to-csv	PASS	2151	cat results.json | awk '{print $1, $2}' > results.csv
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	ds-notebook	FAIL	2353	python3 -m http.server 8000
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	env-vars	PASS	1726	env
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	explore-readme-typo	FAIL	2250	sed -i '' 's/main/main/g' README.md
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	ffmpeg-complete	PASS	2090	ffmpeg -i talk.mov -c copy talk.mp4
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	file-sizes	FAIL	2328	find . -type f -exec wc -l {} \; | bro show
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	find-ctx-tab	FAIL	2148	ctx show "project"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	fix-git-identity	PASS	2307	git config --global user.email 'you@example.com' && git config --global user.name 'Your Name'
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	fix-python-module	PASS	2020	pip3 install requests
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	fix-vite-missing	PASS	1831	npm install
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	folder-size	PASS	1902	du -sh .
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	folder-sizes-sorted	FAIL	2452	find . -type d -printf '%s ; ' | sort -nr | head -5
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	follow-log	PASS	2110	tail -f ~/code/site/server.log
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	followup-fix-your-command	FAIL	2306	du -s -B .
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	followup-hidden-too	PASS	1605	ls -a
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	force-push	FAIL	2105	git push --force-with-lease origin feature/login
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	git-blame-line	FAIL	2337	cat app.py | bro grep -c 'wrote line 40' .
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	git-branch-question	FAIL	2018	git status --shortstat
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	git-remote	PASS	2031	git remote get-url origin
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	grep-todo	PASS	2074	grep -r 'TODO' src
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	hidden-files	PASS	1904	ls -A ~/code/site
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	home-space	FAIL	2640	du -sh ~ | grep -E "^[a-z]\+/[a-z]\+/[a-z]\+\
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	kill-ghostty	PASS	1550	kill -9 812
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	kill-node	PASS	2262	kill -9 4120
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	kill-safari	PASS	1839	kill -9 3001
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	learned-notes	PASS	1880	code ~/Documents/notes
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	mkdir-and-enter	PASS	1815	mkdir -p drafts && cd drafts
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	my-ip	FAIL	2299	curl -s http://localhost:11434/v1/ip | bro show
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	new-branch	PASS	1993	git checkout -b feature/search
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	node-version	PASS	1893	node -v
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	notes-gpu-host	FAIL	2076	ssh -p 2222 user@lab-gpu
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	notes-uv	FAIL	1810	pip3 install requests
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	open-in-finder	PASS	1836	open .
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	open-spotify	FAIL	2092	open -a "Spotify.app" ~/code/site
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	piped-bro-config	FAIL	3378	echo -n 'search_url =
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	piped-kill-vite	PASS	2555	kill -9 5120
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	png-to-jpg	FAIL	1790	convert logo.png -out logo.jpg
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	port-3000	PASS	1951	lsof -i :3000
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	project-in-cursor	FAIL	1815	open -a "Cursor" ~/code/site
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	readme-textedit	FAIL	1974	open -a TextEdit ~/code/README.md
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	real-ctx-app-pid	FAIL	2188	ps -eo pid,name --no-headers | grep ctx
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	real-du-fix-it	FAIL	2158	du -s -B . | grep -E 'miniconda|Downloads'
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	real-no-most-space	FAIL	2001	du -h -B . | sort -hr | head -5
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	real-search-back-to-brave	PASS	2809	sed -i '' 's|search_url = "https://www.google.com/search?q={query}"|search_url = "https://search.brave.com/search?q={query}"|' ~/.config/bro/config.toml
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	real-whoops-commit	FAIL	2608	git ls-remote -r origin main | bro update the branch name to 'main-dev'
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	rebase-keep-mine	FAIL	2398	git rebase --onto main HEAD
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	remember-staging	PASS	2355	echo '- staging server is 10.20.0.8' >> ~/.config/bro/bro.md
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	remote-disk	PASS	2391	ssh deploy@203.0.113.5 'df -h'
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	remote-ssh-host	FAIL	1942	ssh -v user@gpu-box
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	rename-jpeg	FAIL	1842	rename -v *.jpeg -> *.jpg
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	research-arxiv	FAIL	2506	curl -s https://arxiv.com/search?q=diffusion+models | grep -i paper
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	research-wordcount	FAIL	1750	wc -l thesis.md
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	salsa-voice	PASS	2554	open -a "Google Chrome.app" "https://search.brave.com/search?q=videos+about+salsa+dancing"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	show-ports	FAIL	2523	lsof -t | grep -v LISTEN | awk '{print $1}'
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	stop-port-8080	FAIL	2643	lsof -i :8080 | grep -v
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	sysadmin-agent	PASS	2216	~/Agents/sys-admin/bin/sysadmin-agent
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	tail-log	FAIL	2269	tail -n 50 ~/code/site/server.log
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	undo-commit	FAIL	1976	git reset --soft HEAD@{1}
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	unzip-into	FAIL	1797	unzip -d archive.zip out
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	uptime	PASS	1811	uptime
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	weather-voice	FAIL	2429	curl -s
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	whoami	FAIL	1679	echo \$USER
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	why-cargo-failed	PASS	2196	cargo add serde && cargo build
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	wipe-changes	PASS	2010	git reset --hard
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	youtube-voice	FAIL	1924	open -a "YouTube"
+2026-10-20T15:03:03	bro apple-foundationmodel http://localhost:11434/v1	zip-src	FAIL	2243	zip --recurse-paths --split-size 3g src/ ~/code/site/src/

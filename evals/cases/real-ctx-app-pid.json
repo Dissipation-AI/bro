@@ -1,0 +1,3 @@
+{"request": "whats the poid of the ctx app thats running",
+ "processes": [{"name": "WindowServer", "pid": 402, "cpu_percent": 6.1, "memory_mb": 610}, {"name": "CTX", "pid": 10832, "cpu_percent": 2.3, "memory_mb": 96}, {"name": "ctx-launch", "pid": 11798, "cpu_percent": 0.0, "memory_mb": 4}, {"name": "ctx", "pid": 10790, "cpu_percent": 0.4, "memory_mb": 31}, {"name": "Brave Browser", "pid": 73330, "cpu_percent": 1.5, "memory_mb": 622}],
+ "accept": ["^pgrep( -[a-z]+)* -[a-z]*i[a-z]*( -[a-z]+)* \"?(CTX|ctx)\"?$", "^pgrep( -[a-z]+)* -x \"?CTX\"?$", "^pgrep( -[a-z]+)* \"?CTX\"?$", "^echo 10832$", "^ps .*\\| *grep -i ctx"], "reject": ["kill"]}

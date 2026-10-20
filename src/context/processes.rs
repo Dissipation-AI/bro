@@ -13,6 +13,7 @@ const MATCHING: usize = 10;
 
 unsafe extern "C" {
     fn proc_listallpids(buffer: *mut c_void, buffersize: c_int) -> c_int;
+    fn proc_listchildpids(ppid: c_int, buffer: *mut c_void, buffersize: c_int) -> c_int;
     fn proc_name(pid: c_int, buffer: *mut c_void, buffersize: u32) -> c_int;
     fn proc_pid_rusage(pid: c_int, flavor: c_int, buffer: *mut c_void) -> c_int;
     fn mach_absolute_time() -> u64;
@@ -61,6 +62,15 @@ fn all_pids() -> Vec<c_int> {
     }
 }
 
+fn child_pids(parent: c_int) -> Vec<c_int> {
+    let mut buf = vec![0 as c_int; 64];
+    let bytes = unsafe { proc_listchildpids(parent, buf.as_mut_ptr().cast(), (buf.len() * 4) as c_int) };
+    // Returns the number of pids (not bytes, unlike proc_listallpids' documentation suggests).
+    buf.truncate((bytes.max(0) as usize).min(buf.len()));
+    buf.retain(|&p| p > 0);
+    buf
+}
+
 fn name(pid: c_int) -> Option<String> {
     let mut buf = [0u8; 256];
     let n = unsafe { proc_name(pid, buf.as_mut_ptr().cast(), buf.len() as u32) };
@@ -95,9 +105,13 @@ fn usage(pid: c_int) -> Option<Usage> {
 pub fn sample(words: &[String]) -> Vec<Process> {
     let me = std::process::id() as c_int;
     let now = unsafe { mach_absolute_time() };
+    let pids = all_pids();
+    // bro's own helpers (the `ctx` calls made for this request) aren't the person's processes.
+    // Listed after `pids`, so every child in it is here.
+    let mine = child_pids(me);
     let mut all: Vec<Process> = Vec::new();
-    for pid in all_pids() {
-        if pid == me {
+    for pid in pids {
+        if pid == me || mine.contains(&pid) {
             continue;
         }
         let Some(name) = name(pid) else { continue };
@@ -147,6 +161,15 @@ mod tests {
         let pids = all_pids();
         assert!(pids.len() > 10);
         assert!(name(std::os::unix::process::parent_id() as c_int).is_some());
+    }
+
+    #[test]
+    fn lists_its_own_children() {
+        let mut child = std::process::Command::new("/bin/sleep").arg("5").spawn().unwrap();
+        let kids = child_pids(std::process::id() as c_int);
+        child.kill().unwrap();
+        let _ = child.wait();
+        assert!(kids.contains(&(child.id() as c_int)), "{kids:?}");
     }
 
     #[test]

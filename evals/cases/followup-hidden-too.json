@@ -1,0 +1,5 @@
+{"request": "no, show hidden files too",
+ "recent_commands": [
+  {"command": "bro list the files here", "suggested": "ls"},
+  {"command": "ls", "exit_status": 0, "output": "README.md\npackage.json\nsrc"}],
+ "accept": ["^ls -[a-zA-Z]*[aA][a-zA-Z]*$"]}

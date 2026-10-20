@@ -20,6 +20,8 @@ pub struct Record {
     pub folder: String,
     pub request: String,
     pub suggested: String,
+    /// bro's explanation of the suggestion, as shown under the prompt.
+    pub explanation: String,
     /// The next command line after the suggestion, `None` if the next thing was another request.
     pub ran: Option<String>,
     pub exit_status: Option<i32>,
@@ -41,6 +43,7 @@ pub fn record(mut r: Record) -> Result<(), String> {
     let clean = |s: &str| redact::redact(s).into_owned();
     r.request = clean(&r.request);
     r.suggested = clean(&r.suggested);
+    r.explanation = clean(&r.explanation);
     r.ran = r.ran.as_deref().map(clean);
     let dir = data_dir();
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
@@ -70,13 +73,20 @@ fn read_records() -> Vec<Record> {
     text.lines().filter_map(|l| serde_json::from_str(l).ok()).collect()
 }
 
-/// The request in a history line left by the widget (`# bro find big files`), if it is one.
+/// The request in a history line that asked bro (`bro find big files`, or `# bro …` as older
+/// versions left it), if it is one. bro's own subcommands and flags (`bro config`) are commands,
+/// not requests.
 pub fn asked(command: &str) -> Option<&str> {
-    let rest = command.trim().strip_prefix('#')?.trim_start();
+    let line = command.trim();
+    let rest = line.strip_prefix('#').map(str::trim_start).unwrap_or(line);
     let lower = rest.get(..3)?.to_ascii_lowercase();
     let after = rest.get(3..)?;
-    (lower == "bro" && after.chars().next().is_none_or(|c| c.is_whitespace() || c.is_ascii_punctuation()))
-        .then(|| after.trim_start_matches(|c: char| c.is_ascii_punctuation()).trim())
+    if lower != "bro" || !after.chars().next().is_none_or(|c| c.is_whitespace() || c.is_ascii_punctuation()) {
+        return None;
+    }
+    let request = after.trim_start_matches(|c: char| c.is_ascii_punctuation()).trim();
+    let own = request.is_empty() || request.starts_with('-') || crate::SUBCOMMANDS.contains(&request);
+    (!own).then_some(request)
 }
 
 /// Next to each earlier request in the history, what bro suggested for it (newest record).
@@ -88,12 +98,9 @@ pub fn annotate(recent: &mut [super::RecentCommand]) {
     for r in recent.iter_mut() {
         let Some(request) = asked(&r.command) else { continue };
         let request = redact::redact(request).to_lowercase();
-        r.suggested = records
-            .iter()
-            .rev()
-            .find(|rec| rec.request.trim().to_lowercase() == request)
-            .map(|rec| rec.suggested.clone())
-            .filter(|s| !s.is_empty());
+        let found = records.iter().rev().find(|rec| rec.request.trim().to_lowercase() == request);
+        r.suggested = found.map(|rec| rec.suggested.clone()).filter(|s| !s.is_empty());
+        r.suggested_explanation = found.map(|rec| rec.explanation.clone()).filter(|s| !s.is_empty());
     }
 }
 
@@ -150,6 +157,17 @@ fn rank(examples: Vec<Example>, words: &[String], limit: usize) -> Vec<Example> 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn requests_in_history() {
+        assert_eq!(asked("bro find big files"), Some("find big files"));
+        assert_eq!(asked("Bro, what's on port 3000?"), Some("what's on port 3000?"));
+        assert_eq!(asked("# bro fix it"), Some("fix it"));
+        assert_eq!(asked("bro config"), None);
+        assert_eq!(asked("bro --show-prompt list files"), None);
+        assert_eq!(asked("brown paper"), None);
+        assert_eq!(asked("cat x | bro fix"), None);
+    }
 
     fn rec(time: u64, request: &str, ran: Option<&str>, status: Option<i32>) -> Record {
         Record {

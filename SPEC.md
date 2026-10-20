@@ -32,7 +32,7 @@ runtime to boot.
 
 ## Non-goals
 
-- Chat, multi-turn agents, or running tools in a loop. One request in, one command out. (cleaver users can use the # to leave a comment in "response" in the history, which bro picks up)
+- Chat, multi-turn agents, or running tools in a loop. One request in, one command out. (Each `bro …` line stays in the history as typed, so a follow-up request such as "no, show hidden files too" sees the earlier ones and what bro answered.)
 - Its own model hosting. You bring an endpoint.
 - bash/fish (v1 is zsh only).
 
@@ -74,7 +74,7 @@ bottom when over budget:
 | Your request + the current line | ✓ | ✓ |
 | Last 3 commands (excludes empty lines), exit status, **and their output** (tail-trimmed to ~60 lines each) | `ctx read last 3 commands as json` | commands only, from zsh history |
 | Current folder, git branch + short status, `ls` of the folder (first 50 entries) | ✓ | ✓ |
-| Your open tabs: number, name, folder, running command | `ctx list as json` | — |
+| Your open tabs: number, name, folder, running command | `ctx list tabs as json` | — |
 | Running processes: top 15 by CPU and by memory, plus the shell's `jobs` | ✓ | ✓ |
 | Environment variables (redacted, see Privacy) and alias/function names | ✓ | ✓ |
 | Installed apps (`/Applications`, `~/Applications`), default browser | cached | cached |
@@ -126,6 +126,20 @@ bottom when over budget:
   - open an app or project → `open -a "…"` / `cd ~/…` / `ctx open tab at ~/… named "…"`
   - fix the last failed command, using its error output
   - complete a half-typed command
+- **Layout:** the context is shown the way the person saw their terminal, oldest first, then the
+  request:
+  1. facts about the Mac (apps, processes, tabs, tools, environment, man/tldr excerpts, `bro.md`),
+     each under a plain label such as `Open tabs:`. Small models copy fake command lines like
+     `$ ps …` into their answers, so facts aren't dressed as commands;
+  2. where the person is, as the commands that would show it: `$ pwd`, `$ tree -F -L 2`,
+     `$ git status -sb`;
+  3. the commands they ran, with output where known and `zsh: exit N` after a failure;
+  4. `Request: …`, right after the command it's about. A half-typed line comes just before it as
+     `Typed so far: …`, and piped text as `<folder> $ <command> | bro` and the text.
+
+  An earlier `bro …` request in the history becomes a turn of its own: the request as a user
+  message and bro's answer as the assistant's, followed by what was run since. The built-in
+  examples use the same layout. Chosen over four other layouts by the eval set (October 2026).
 - When the model is unsure, it says so in `explanation` and still gives its best command. A
   question back to the user isn't allowed (one shot).
 - `temperature = 0` by default.

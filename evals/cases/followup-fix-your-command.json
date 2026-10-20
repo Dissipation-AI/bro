@@ -1,0 +1,8 @@
+{"request": "fix your command thats not a valid command",
+ "folder": "~", "git": null,
+ "recent_commands": [
+  {"command": "bro what taking up the most space on this mac", "suggested": "du -s -B ."},
+  {"command": "du -s -B .", "exit_status": 64, "output": "du: invalid argument to option B: .\nusage: du [--libxo] [-Aclnx] [-H | -L | -P] [-g | -h | -k | -m]\n          [-a | -s | -d depth] [-B blocksize] [-I mask] [-t threshold]\n          [file ...]"}],
+ "accept": ["^(sudo )?du -[a-zA-Z]*[hsdk]"],
+ "reject": ["-B ?\\.", "\\brm\\b"],
+ "dangerous": false}

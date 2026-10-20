@@ -64,6 +64,9 @@ struct Args {
     words: Vec<String>,
 }
 
+/// bro's own subcommands, as typed after `bro`: a line that's one of these isn't a request.
+pub const SUBCOMMANDS: &[&str] = &["install", "init zsh", "config", "config --check"];
+
 /// Flags come first; the first word that isn't a flag starts the request, and everything from
 /// there on is the request verbatim (`bro find files named --foo` keeps `--foo`).
 fn parse_args(raw: Vec<String>) -> Result<Args, String> {
@@ -131,6 +134,8 @@ fn main() -> ExitCode {
             print!("{}", zsh::init_script(&config));
             return ExitCode::SUCCESS;
         }
+        // `--check` after `config` is part of the words (everything after the first word is).
+        ["config", "--check"] => return exit(setup::check(&load_config(&args).unwrap_or_default())),
         ["config"] if args.check => return exit(setup::check(&load_config(&args).unwrap_or_default())),
         ["config"] => return exit(setup::interactive()),
         _ => {}
@@ -418,6 +423,7 @@ fn record_from_env() -> Result<(), String> {
         folder: std::env::current_dir().map(|d| context::folder::tilde(&d)).unwrap_or_default(),
         request: var("BRO_REC_REQUEST").unwrap_or_default(),
         suggested: var("BRO_REC_SUGGESTED").unwrap_or_default(),
+        explanation: var("BRO_REC_EXPLANATION").unwrap_or_default(),
         ran: var("BRO_REC_RAN"),
         exit_status: var("BRO_REC_STATUS").and_then(|s| s.parse().ok()),
     };

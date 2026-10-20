@@ -134,10 +134,16 @@ fn path_dirs() -> Vec<PathBuf> {
 }
 
 pub fn on_path(command: &str) -> bool {
+    which(command).is_some()
+}
+
+/// Where `command` is on PATH, like `which`.
+pub fn which(command: &str) -> Option<PathBuf> {
     use std::os::unix::fs::PermissionsExt;
     path_dirs()
         .iter()
-        .any(|d| std::fs::metadata(d.join(command)).is_ok_and(|m| m.is_file() && m.permissions().mode() & 0o111 != 0))
+        .map(|d| d.join(command))
+        .find(|p| std::fs::metadata(p).is_ok_and(|m| m.is_file() && m.permissions().mode() & 0o111 != 0))
 }
 
 fn man_roots() -> Vec<PathBuf> {

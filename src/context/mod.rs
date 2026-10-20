@@ -37,7 +37,7 @@ pub struct Context {
     pub earlier_piped: Vec<Piped>,
     pub folder: String,
     pub git: Option<Git>,
-    /// First entries of the folder listing; directories end in `/`.
+    /// The folder's entries two levels deep (`src/`, `src/main.rs`); directories end in `/`.
     pub files: Vec<String>,
     pub files_total: usize,
     /// Oldest first.
@@ -47,6 +47,7 @@ pub struct Context {
     pub jobs: Vec<String>,
     /// Name and, where allowed, value.
     pub environment: Vec<(String, Option<String>)>,
+    /// `name=value`, or just the name.
     pub aliases: Vec<String>,
     pub functions: Vec<String>,
     pub apps: Vec<String>,
@@ -60,6 +61,40 @@ pub struct Context {
     /// Matching tldr examples for installed commands. `None` in a snapshot means "look them up".
     pub tldr: Option<Vec<tldr::Example>>,
     pub system: system::System,
+    /// The active conda/mamba environment or Python virtualenv, if any.
+    pub active_env: Option<ActiveEnv>,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ActiveEnv {
+    /// The variable that names it: `CONDA_PREFIX` or `VIRTUAL_ENV`.
+    pub variable: String,
+    pub prefix: String,
+    /// What's in its `bin/` (empty when there are too many to be worth listing).
+    pub bin: Vec<String>,
+    pub bin_total: usize,
+}
+
+/// An environment's `bin/` is listed only up to this many entries; a base conda install has
+/// hundreds, which say nothing a request needs.
+const ENV_BIN_LISTED: usize = 150;
+
+fn active_env() -> Option<ActiveEnv> {
+    let (variable, prefix) = ["VIRTUAL_ENV", "CONDA_PREFIX"]
+        .iter()
+        .find_map(|v| std::env::var(v).ok().filter(|p| !p.is_empty()).map(|p| (v.to_string(), p)))?;
+    let mut bin: Vec<String> = std::fs::read_dir(std::path::Path::new(&prefix).join("bin"))
+        .map(|d| {
+            d.flatten().map(|e| e.file_name().to_string_lossy().into_owned()).filter(|n| !n.starts_with('.')).collect()
+        })
+        .unwrap_or_default();
+    let bin_total = bin.len();
+    if bin_total > ENV_BIN_LISTED {
+        bin.clear();
+    }
+    bin.sort();
+    Some(ActiveEnv { variable, prefix: folder::tilde(std::path::Path::new(&prefix)), bin, bin_total })
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -68,6 +103,8 @@ pub struct Git {
     pub branch: String,
     /// e.g. "2 staged, 3 modified, 1 untracked", or "clean".
     pub status: Option<String>,
+    /// The first changes as `git status -s` shows them, e.g. ` M src/main.rs`.
+    pub changes: Vec<String>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -77,8 +114,10 @@ pub struct RecentCommand {
     pub exit_status: Option<i32>,
     /// Tail of the output, when known (inside ctx, or in an eval snapshot).
     pub output: Option<String>,
-    /// For an earlier request left in the history as `# bro …`: what bro suggested then.
+    /// For an earlier `bro …` request in the history: what bro suggested then.
     pub suggested: Option<String>,
+    /// And its explanation.
+    pub suggested_explanation: Option<String>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -136,7 +175,13 @@ impl ShellState {
                 .ok()
                 .map(|v| v.split('\x1e').filter(|s| !s.trim().is_empty()).map(String::from).collect()),
             last_status: std::env::var("BRO_STATUS").ok().and_then(|s| s.parse().ok()),
-            aliases: list("BRO_ALIASES"),
+            // `name=value` pairs split by 0x1e (an older widget sent names split by spaces).
+            aliases: match std::env::var("BRO_ALIASES") {
+                Ok(v) if v.contains(['\x1e', '=']) => {
+                    v.split('\x1e').filter(|s| !s.is_empty()).map(String::from).collect()
+                }
+                _ => list("BRO_ALIASES"),
+            },
             functions: list("BRO_FUNCTIONS"),
             jobs: std::env::var("BRO_JOBS")
                 .map(|v| v.split('\x1e').filter(|s| !s.is_empty()).map(String::from).collect())
@@ -149,10 +194,9 @@ impl ShellState {
 pub const SOURCE_TIME_LIMIT: Duration = Duration::from_millis(30);
 
 enum Part {
-    Recent(Vec<RecentCommand>),
     Folder(String, Vec<String>, usize),
     Git(Git),
-    GitStatus(String),
+    GitStatus((String, Vec<String>)),
     Ctx(ctx::CtxContext),
     Processes(Vec<Process>),
     Index(index::Index),
@@ -184,34 +228,6 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
     };
 
     let mut expected = 0;
-    {
-        let history = shell.history.clone();
-        let last_status = shell.last_status;
-        expected += 1;
-        let count = config.recent_commands;
-        let this_request = request.trim().to_string();
-        spawn(
-            "history",
-            &tx,
-            Box::new(move || {
-                let mut recent = history::recent(history, last_status, count + 1);
-                // The widget enters this request as `# bro …` before asking; it isn't history yet.
-                let same = |a: &str| norm(a) == norm(&this_request);
-                if recent.last().and_then(|r| learned::asked(&r.command)).is_some_and(same) {
-                    recent.pop();
-                }
-                // The exit status is the last real command's: `# bro …` comments don't change it.
-                let status = recent.iter_mut().filter_map(|r| r.exit_status.take()).last();
-                if let Some(real) = recent.iter_mut().rev().find(|r| learned::asked(&r.command).is_none()) {
-                    real.exit_status = status.or(last_status);
-                }
-                let start = recent.len().saturating_sub(count);
-                recent.drain(..start);
-                learned::annotate(&mut recent);
-                Some(Part::Recent(recent))
-            }),
-        );
-    }
     expected += 1;
     spawn(
         "folder",
@@ -229,10 +245,11 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
         expected += 1;
         spawn("git status", &tx, Box::new(move || folder::git_status(stop).map(Part::GitStatus)));
     }
+    // Not the saved-tab search (`ctx find`): it takes 10–50 ms, and the ctx server answers one
+    // request at a time, so it also held up these.
     if in_ctx {
-        let words = words.clone();
         expected += 1;
-        spawn("ctx", &tx, Box::new(move || ctx::read(&words).map(Part::Ctx)));
+        spawn("ctx", &tx, Box::new(|| ctx::read().map(Part::Ctx)));
     }
     {
         let words = words.clone();
@@ -268,7 +285,15 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
     drop(tx);
     timings.mark("sources started");
 
+    // History is the most important source and needs no slow I/O, so it's read here, while the
+    // others run, and is never dropped for being late (under load, a 30 ms limit could).
+    let history_started = Instant::now();
+    let recent_commands = recent_history(shell.history.clone(), shell.last_status, request, config.recent_commands);
+    timings.record("history", history_started.elapsed());
+
     let mut context = Context {
+        recent_commands,
+        active_env: active_env(),
         request: request.to_string(),
         line: line.to_string(),
         environment: environment(),
@@ -293,21 +318,25 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
                 timings.record(name, took);
                 let Some(part) = part else { continue };
                 match part {
-                    Part::Recent(r) => context.recent_commands = r,
                     Part::Folder(folder, files, total) => {
                         context.folder = folder;
                         context.files = files;
                         context.files_total = total;
                     }
-                    Part::Git(git) => context.git = Some(Git { status: pending_status.take(), ..git }),
-                    Part::GitStatus(status) => match &mut context.git {
-                        Some(git) => git.status = Some(status),
-                        None => pending_status = Some(status),
+                    Part::Git(git) => {
+                        let (status, changes) = pending_status.take().unzip();
+                        context.git = Some(Git { status, changes: changes.unwrap_or_default(), ..git });
+                    }
+                    Part::GitStatus((status, changes)) => match &mut context.git {
+                        Some(git) => {
+                            git.status = Some(status);
+                            git.changes = changes;
+                        }
+                        None => pending_status = Some((status, changes)),
                     },
                     Part::Ctx(c) => {
                         ctx_commands = c.recent_commands;
                         context.tabs = c.tabs;
-                        context.saved_tab_commands = c.saved_tab_commands;
                     }
                     Part::Processes(p) => context.processes = p,
                     Part::Index(i) => {
@@ -330,6 +359,31 @@ pub fn gather(request: &str, line: &str, shell: ShellState, config: &Config, tim
     merge_ctx_commands(&mut context.recent_commands, ctx_commands);
     timings.mark("sources done");
     context
+}
+
+/// The last `count` history lines, oldest first, each earlier `bro …` request with what bro
+/// suggested, and the exit status on the newest real command.
+fn recent_history(
+    history: Option<Vec<String>>,
+    last_status: Option<i32>,
+    request: &str,
+    count: usize,
+) -> Vec<RecentCommand> {
+    let mut recent = history::recent(history, last_status, count + 1);
+    // The widget adds this request to the history before asking; it isn't history yet.
+    let same = |a: &str| norm(a) == norm(request);
+    if recent.last().and_then(|r| learned::asked(&r.command)).is_some_and(same) {
+        recent.pop();
+    }
+    // The exit status is the last real command's: earlier `bro …` requests don't change it.
+    let status = recent.iter_mut().filter_map(|r| r.exit_status.take()).last();
+    if let Some(real) = recent.iter_mut().rev().find(|r| learned::asked(&r.command).is_none()) {
+        real.exit_status = status.or(last_status);
+    }
+    let start = recent.len().saturating_sub(count);
+    recent.drain(..start);
+    learned::annotate(&mut recent);
+    recent
 }
 
 /// For comparing requests: case, surrounding space and final punctuation don't matter.

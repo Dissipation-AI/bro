@@ -1,0 +1,10 @@
+{"request": "whoops i meant to say \"added ctx-app submodule\"",
+ "folder": "~/Workspaces/charles-terminal-experience", "git": {"branch": "main", "status": "clean"},
+ "files": ["README.md", "bro/", "ctx/", "ctx-app/", "shared/"], "files_total": 5,
+ "recent_commands": [
+  {"command": "git status", "exit_status": 0},
+  {"command": "cd ctx"},
+  {"command": "git status"},
+  {"command": "cd .."},
+  {"command": "git commit -m 'added ctx submodule'", "exit_status": 0, "output": "[main 3f2a91c] added ctx submodule\n 2 files changed, 4 insertions(+)\n create mode 160000 ctx-app"}],
+ "accept": ["^git commit --amend -m ['\"]added ctx-app submodule['\"]$"]}

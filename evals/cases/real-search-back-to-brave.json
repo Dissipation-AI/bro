@@ -1,0 +1,7 @@
+{"request": "swap web search back to brave from  google",
+ "folder": "~",  "git": null,
+ "recent_commands": [
+  {"command": "bro change your web search to google", "suggested": "sed -i '' 's|search_url = \".*\"|search_url = \"https://www.google.com/search?q={query}\"|' ~/.config/bro/config.toml"},
+  {"command": "sed -i '' 's|search_url = \".*\"|search_url = \"https://www.google.com/search?q={query}\"|' ~/.config/bro/config.toml", "exit_status": 0},
+  {"command": "cat ~/.config/bro/bro.md", "exit_status": 0, "output": "- I use uv, not pip"}],
+ "accept": ["^sed -i '' .*search\\.brave\\.com/search\\?q=\\{query\\}.*~/\\.config/bro/config\\.toml$", "^bro config$"]}

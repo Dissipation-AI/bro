@@ -9,7 +9,14 @@ pub struct System {
     pub arch: String,
     pub shell: String,
     pub terminal: String,
+    /// Which of [`TOOLS`] are installed, as `which` finds them (empty: not looked up).
+    pub tools: Vec<String>,
 }
+
+/// Tools worth knowing about: better versions of standard ones (rg, fd, eza, bat), and the ones
+/// bro's own session view uses (tree).
+pub const TOOLS: &[&str] =
+    &["tree", "rg", "fd", "fzf", "eza", "bat", "jq", "htop", "btop", "gh", "uv", "conda", "mamba", "docker", "brew"];
 
 pub fn read() -> System {
     System {
@@ -17,6 +24,7 @@ pub fn read() -> System {
         arch: std::env::consts::ARCH.replace("aarch64", "arm64"),
         shell: std::env::var("SHELL").ok().and_then(|s| s.rsplit('/').next().map(String::from)).unwrap_or_default(),
         terminal: std::env::var("TERM_PROGRAM").unwrap_or_default(),
+        tools: TOOLS.iter().filter_map(|t| super::man::which(t)).map(|p| super::folder::tilde(&p)).collect(),
     }
 }
 
